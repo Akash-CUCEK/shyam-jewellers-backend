@@ -25,7 +25,7 @@ public class UserController {
     @Operation(summary = "Login a user", description = "Login a User.")
     @PostMapping("/logIn")
     public BaseResponseDTO<LogInResponseDTO> register(
-            @RequestHeader String requestId,
+            @RequestHeader(value = "requestId", required = false) String requestId,
             @RequestBody logInRequestDTO logInRequestDTO
             ){
         logger.info("Received request for sigIn for requestId : {}",requestId);
@@ -36,7 +36,7 @@ public class UserController {
     @Operation(summary = "Verify a user", description = "Verify a User.")
     @PostMapping("/verify")
     public BaseResponseDTO<OtpResponseDTO> verify(
-            @RequestHeader String requestId,
+            @RequestHeader(value = "requestId", required = false) String requestId,
             @RequestBody OtpRequestDTO otpRequestDTO
     ){
         logger.info("Received request for verify for requestId : {}",requestId);
@@ -47,7 +47,7 @@ public class UserController {
     @Operation(summary = "Logout a user", description = "Logout a User.")
     @PostMapping("/logout")
     public BaseResponseDTO<LogoutResponseDTO> logout(
-            @RequestHeader String requestId,
+            @RequestHeader(value = "requestId", required = false) String requestId,
             @RequestBody LogoutRequestDTO logoutRequestDTO
     ){
         logger.info("Received request for logout for requestId : {}",requestId);

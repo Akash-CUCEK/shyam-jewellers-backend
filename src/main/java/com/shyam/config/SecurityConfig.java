@@ -26,18 +26,21 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> {}) // ye ab neeche wale bean ko use karega
+                // ⭐ IMPORTANT: corsConfigurationSource use karo
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // ⭐ OPTIONS allow (preflight)
+                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(
                                 "/auth/api/v1/admin/logIn",
                                 "/auth/api/v1/admin/forgetPassword",
                                 "/auth/api/v1/admin/verifyOtp",
                                 "/api/v1/auth/logIn",
                                 "/api/v1/auth/verify",
-//                                "/auth/api/v1/admin/registerAdmin",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
@@ -59,16 +62,27 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    // ⭐ UPDATED CORS CONFIG
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of("http://localhost:5173")); // React app ka origin
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedOrigins(List.of(
+                "http://localhost:5173",
+                "https://calm-flower-04b72f600.3.azurestaticapps.net"
+        ));
+
+        configuration.setAllowedMethods(List.of(
+                "GET", "POST", "PUT", "DELETE", "OPTIONS"
+        ));
+
         configuration.setAllowedHeaders(List.of("*"));
+        configuration.setExposedHeaders(List.of("requestId"));
         configuration.setAllowCredentials(true);
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        UrlBasedCorsConfigurationSource source =
+                new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
 
         return source;

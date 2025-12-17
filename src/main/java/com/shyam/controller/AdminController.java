@@ -77,7 +77,7 @@ public class AdminController {
     @Operation(summary = "Get Offer Section", description = "Get offer photo.")
     @PostMapping("/get OfferPhoto")
     public BaseResponseDTO<GetOfferPhotoResponseDTO> getoffer(
-            @RequestHeader String requestId
+            @RequestHeader(value = "requestId", required = false) String requestId
     ){
         logger.info("Received request to get offer photo for requestId : {}",requestId);
         var response = adminService.getOffer(requestId);
@@ -87,7 +87,7 @@ public class AdminController {
     @Operation(summary = "Get offer Section", description = "Getting offer photo.")
     @PostMapping("/getOfferPhoto")
     public BaseResponseDTO<GetOfferPhotoResponseDTO> offerUpdate(
-            @RequestHeader String requestId
+            @RequestHeader(value = "requestId", required = false) String requestId
     ){
         logger.info("Received request for get offer photo for requestId : {}",requestId);
         var response = adminService.getOfferPhoto(requestId);
@@ -153,7 +153,7 @@ public class AdminController {
     @Operation(summary = "Get All Admin", description = "Get All Admin.")
     @PostMapping("/getAllAdmin")
     public BaseResponseDTO<GetAdminListResponseDTO> getAllAdmin(
-            @RequestHeader String requestId
+            @RequestHeader(value = "requestId", required = false) String requestId
     ){
         logger.info("Received request for getting all admin for requestId : {}",requestId);
         var response = adminService.getAllAdmin(requestId);

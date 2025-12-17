@@ -26,7 +26,7 @@ public class OrderController {
     @PostMapping("/createOrder")
     public BaseResponseDTO<AddOrderResponseDTO> addOrder(
             @RequestBody AddOrderRequestDTO addOrderRequestDTO,
-            @RequestHeader String requestId
+            @RequestHeader(value = "requestId", required = false) String requestId
     ){
         logger.info("Received request for create order for requestId : {}",requestId);
         var response = orderService.createOrder(addOrderRequestDTO,requestId);
@@ -37,7 +37,7 @@ public class OrderController {
     @PostMapping("/getOrderById")
     public BaseResponseDTO<GetOrderByIdResponseDTO> getOrderById(
             @RequestBody GetOrderByIdRequestDTO getOrderByIdRequestDTO,
-            @RequestHeader String requestId
+            @RequestHeader(value = "requestId", required = false) String requestId
     ){
         logger.info("Received request for get order by Id for requestId : {}",requestId);
         var response = orderService.getOrderById(getOrderByIdRequestDTO,requestId);
@@ -49,7 +49,7 @@ public class OrderController {
     @PostMapping("/getOrderByDate")
     public BaseResponseDTO<GetOrderByDateResponseDTO> getOrderByDate(
             @RequestBody GetOrderByDateRequestDTO getOrderBydateRequestDTO,
-            @RequestHeader String requestId
+            @RequestHeader(value = "requestId", required = false) String requestId
     ){
         logger.info("Received request for get order by date for requestId : {}",requestId);
         var response = orderService.getOrderByDate(getOrderBydateRequestDTO,requestId);
@@ -60,7 +60,7 @@ public class OrderController {
     @Operation(summary = "get total count order", description = "Getting total order of month")
     @PostMapping("/getTotalOrderMonth")
     public BaseResponseDTO<GetTotalOrderMonthResponse> getTotalOrderMonth(
-            @RequestHeader String requestId
+            @RequestHeader(value = "requestId", required = false) String requestId
     ){
         logger.info("Received request for getting total order in month for requestId : {}",requestId);
         var response = orderService.getTotalOrderMonth(requestId);

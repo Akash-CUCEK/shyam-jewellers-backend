@@ -62,7 +62,7 @@ public class ProductController {
     @Operation(summary = "Get all products", description = "Get all products")
     @PostMapping("/search/getAllProducts")
     public BaseResponseDTO<GetProductResponseDTO> getAllProduct(
-            @RequestHeader String requestId
+            @RequestHeader(value = "requestId", required = false) String requestId
     ) {
         logger.info("Received request to get all products | requestId: {}", requestId);
         var response = productService.getAllProduct(requestId);

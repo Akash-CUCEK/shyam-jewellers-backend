@@ -83,10 +83,4 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             response.getWriter().write("{\"error\": \"Unauthorized: Invalid or missing token\"}");
         }
     }
-
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        return request.getMethod().equalsIgnoreCase("OPTIONS");
-    }
-
 }

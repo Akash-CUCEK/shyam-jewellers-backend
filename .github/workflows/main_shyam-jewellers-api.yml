@@ -5,6 +5,11 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to deploy'
+        required: true
+        default: 'main'
 
 jobs:
   build:
@@ -13,8 +18,10 @@ jobs:
       contents: read
 
     steps:
-      - name: Checkout code
+      - name: Checkout selected branch
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch }}
 
       - name: Set up Java 21
         uses: actions/setup-java@v4
@@ -47,13 +54,13 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_B74724C3AFDA456C8B21160EF21CC153 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_6580ACAD67B24B1AACA18B797DE25CF7 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_DF160CD61436444BAE1EB49123489822 }}
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: shyam-jewellers-api
-          slot-name: Production
+          app-name: 'shyam-jewellers-api'
+          slot-name: 'Production'
           package: '*.jar'

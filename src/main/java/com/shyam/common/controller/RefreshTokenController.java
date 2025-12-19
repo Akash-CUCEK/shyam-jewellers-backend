@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
-
-
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -20,16 +18,12 @@ public class RefreshTokenController {
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshToken(@CookieValue("refreshToken") String refreshToken) {
         log.info("Refresh token request received");
-
-        var userId = jwtUtil.validateRefreshToken(refreshToken);
-        if (userId == null) {
-            log.warn("Refresh failed. Invalid token={}", refreshToken);
+        if (jwtUtil.validateToken(refreshToken)) {
+            log.warn("Invalid token");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
         }
-
-        var newAccessToken = JwtUtil.generateAccessToken(userId, "USER"); // role dynamically bhi le sakte
-        log.info("Issued new access token for userId={}", userId);
-
+        var newAccessToken = JwtUtil.generateAccessToken(jwtUtil.getUsername(refreshToken), jwtUtil.getRole(refreshToken));
+        log.info("Error while generating refresh token");
         return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
     }
 }

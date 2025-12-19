@@ -4,31 +4,31 @@ import com.shyam.dto.request.*;
 import com.shyam.dto.response.*;
 
 public interface AdminService {
-    AdminLogInResponseDTO logIn(AdminLogInRequestDTO adminLogInRequestDTO, String requestId);
+    AdminLogInResponseDTO logIn(AdminLogInRequestDTO adminLogInRequestDTO );
 
-    VerifyAdminResponseDTO verifyOtp(VerifyAdminRequestDTO verifyAdminRequestDTO, String requestId);
+    VerifyAdminResponseDTO verifyOtp(VerifyAdminRequestDTO verifyAdminRequestDTO );
 
-    AdminLogoutResponseDTO logout(AdminLogoutRequestDTO adminLogoutRequestDTO, String requestId);
+    AdminLogoutResponseDTO logout(AdminLogoutRequestDTO adminLogoutRequestDTO );
 
-    EditAdminResponseDTO edit(EditAdminRequestDTO editAdminRequestDTO, String requestId);
+    EditAdminResponseDTO edit(EditAdminRequestDTO editAdminRequestDTO );
 
-    ChangePasswordResponseDTO changePassword(ChangePasswordRequestDTO changePasswordRequestDTO, String requestId);
+    ChangePasswordResponseDTO changePassword(ChangePasswordRequestDTO changePasswordRequestDTO );
 
-    RegisterResponseDTO registerAdmin(RegisterRequestDTO registerRequestDTO, String requestId);
+    RegisterResponseDTO registerAdmin(RegisterRequestDTO registerRequestDTO );
 
-    EditPhotoResponseDTO offerUpdate(EditPhotoRequestDTO editPhotoRequestDTO, String requestId);
+    EditPhotoResponseDTO offerUpdate(EditPhotoRequestDTO editPhotoRequestDTO);
 
-    GetOfferPhotoResponseDTO getOfferPhoto(String requestId);
+    GetOfferPhotoResponseDTO getOfferPhoto();
 
-    GetAdminListResponseDTO getAllAdmin(String requestId);
+    GetAdminListResponseDTO getAllAdmin();
 
-    DeleteAdminResponseDTO deleteAdmin(DeleteAdminRequestDTO deleteAdmin, String requestId);
+    DeleteAdminResponseDTO deleteAdmin(DeleteAdminRequestDTO deleteAdmin);
 
-    GetAdminResponseDTO getAdmin(GetAdminRequestDTO getAdminRequestDTO, String requestId);
+    GetAdminResponseDTO getAdmin(GetAdminRequestDTO getAdminRequestDTO);
 
-    GetOfferPhotoResponseDTO getOffer(String requestId);
+    GetOfferPhotoResponseDTO getOffer();
 
-    ForgetPasswordResponseDTO forgetPassword(ForgetPasswordRequestDTO forgetPasswordRequestDTO, String requestId);
+    ForgetPasswordResponseDTO forgetPassword(ForgetPasswordRequestDTO forgetPasswordRequestDTO);
 
-//    VerifyForgetPasswordResponseDTO forgetVerifyOtp(VerifyAdminRequestDTO verifyAdminRequestDTO, String requestId);
+//    VerifyForgetPasswordResponseDTO forgetVerifyOtp(VerifyAdminRequestDTO verifyAdminRequestDTO, String );
 }

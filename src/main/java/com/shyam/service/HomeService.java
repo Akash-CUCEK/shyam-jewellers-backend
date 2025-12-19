@@ -4,17 +4,17 @@ import com.shyam.dto.request.*;
 import com.shyam.dto.response.*;
 
 public interface HomeService {
-    GetAllHomeServiceResponseDTO getAllHomeServiceRequests(String requestId);
+    GetAllHomeServiceResponseDTO getAllHomeServiceRequests();
 
-    CreateHomeServiceResponseDTO createHomeServiceRequests(String requestId, CreateHomeServiceRequestDTO createHomeServiceRequestDTO);
+    CreateHomeServiceResponseDTO createHomeServiceRequests(CreateHomeServiceRequestDTO createHomeServiceRequestDTO);
 
-    EditHomeServiceResponseDTO editHomeServiceRequest(String requestId, EditHomeServiceRequestDTO editHomeServiceRequestDTO);
+    EditHomeServiceResponseDTO editHomeServiceRequest(EditHomeServiceRequestDTO editHomeServiceRequestDTO);
 
-    GetAllHomeServiceResponseDTO searchHomeServiceRequest(String requestId, SearchHomeServiceRequestDTO searchHomeServiceRequestDTO);
+    GetAllHomeServiceResponseDTO searchHomeServiceRequest(SearchHomeServiceRequestDTO searchHomeServiceRequestDTO);
 
-    DeleteHomeServiceResponseDTO deleteHomeServiceRequest(String requestId, DeleteHomeServiceRequestDTO editHomeServiceRequestDTO);
+    DeleteHomeServiceResponseDTO deleteHomeServiceRequest(DeleteHomeServiceRequestDTO editHomeServiceRequestDTO);
 
-    HomeServiceResponseDTO getHomeServiceRequestById(String requestId, HomeServiceRequestDTO homeServiceRequestDTO);
+    HomeServiceResponseDTO getHomeServiceRequestById(HomeServiceRequestDTO homeServiceRequestDTO);
 
-    GetAllHomeServiceResponseDTO getAllUserServiceRequests(String requestId);
+    GetAllHomeServiceResponseDTO getAllUserServiceRequests();
 }

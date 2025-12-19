@@ -6,21 +6,21 @@ import jakarta.validation.Valid;
 
 public interface ProductService {
 
-    ProductAddResponseDTO addProduct(ProductAddRequestDTO productAddRequestDTO, String requestId);
+    ProductAddResponseDTO addProduct(ProductAddRequestDTO productAddRequestDTO );
 
-    UpdateResponseDTO updateProduct(UpdateRequestDTO updateRequestDTO, String requestId);
+    UpdateResponseDTO updateProduct(UpdateRequestDTO updateRequestDTO);
 
-    DeleteResponseDTO deleteProduct(DeleteProductRequestDTO deleteProductRequestDTO, String requestId);
+    DeleteResponseDTO deleteProduct(DeleteProductRequestDTO deleteProductRequestDTO);
 
-    GetProductResponseDTO getPriceProduct(PriceRequestDTO priceRequestDTO, String requestId);
+    GetProductResponseDTO getPriceProduct(PriceRequestDTO priceRequestDTO);
 
-    CategoryResponseDTO getCategoryProduct(CategoryRequestDTO categoryRequestDTO, String requestId);
+    CategoryResponseDTO getCategoryProduct(CategoryRequestDTO categoryRequestDTO);
 
-    GenderResponseDTO getGenderProduct(GenderRequestDTO genderRequestDTO, String requestId);
+    GenderResponseDTO getGenderProduct(GenderRequestDTO genderRequestDTO);
 
-    ProductResponseDTO getNameProduct(@Valid GetProductByNameRequestDTO getProductByNameRequestDTO, String requestId);
+    ProductResponseDTO getNameProduct(@Valid GetProductByNameRequestDTO getProductByNameRequestDTO);
 
-    GetProductResponseDTO getAllProduct(String requestId);
+    GetProductResponseDTO getAllProduct();
 
-    ProductFilterResponseDTO getFilteredProducts(@Valid ProductFilterRequestDTO filterDTO, String requestId);
+    ProductFilterResponseDTO getFilteredProducts(@Valid ProductFilterRequestDTO filterDTO);
 }

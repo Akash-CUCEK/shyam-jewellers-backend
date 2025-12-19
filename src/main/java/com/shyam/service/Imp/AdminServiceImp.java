@@ -21,34 +21,34 @@ public class AdminServiceImp implements AdminService {
     private final MessageSourceUtil messageSourceUtil;
 
     @Override
-    public AdminLogInResponseDTO logIn(AdminLogInRequestDTO adminLogInRequestDTO, String requestId) {
+    public AdminLogInResponseDTO logIn(AdminLogInRequestDTO adminLogInRequestDTO) {
         adminMapper.logIn(adminLogInRequestDTO);
         return adminMapper.mapToAdminLogInMessage(messageSourceUtil
                 .getMessage(MESSAGE_CODE_LOGIN_SEND_OTP));
     }
     @Override
-    public ForgetPasswordResponseDTO forgetPassword(ForgetPasswordRequestDTO forgetPasswordRequestDTO, String requestId) {
+    public ForgetPasswordResponseDTO forgetPassword(ForgetPasswordRequestDTO forgetPasswordRequestDTO) {
         adminMapper.forgetPassword(forgetPasswordRequestDTO);
         return adminMapper.mapToAdminForgetPasswordMessage(messageSourceUtil
                 .getMessage(MESSAGE_CODE_FORGET_ADMIN_PASSWORD_SEND_OTP));
     }
 
 //    @Override
-//    public VerifyForgetPasswordResponseDTO forgetVerifyOtp(VerifyAdminRequestDTO verifyAdminRequestDTO, String requestId) {
+//    public VerifyForgetPasswordResponseDTO forgetVerifyOtp(VerifyAdminRequestDTO verifyAdminRequestDTO, String ) {
 //        adminMapper.forgetVerifyOtp(verifyAdminRequestDTO);
 //        return adminMapper.mapToVerifyForgetOtpInMessage(messageSourceUtil
 //                .getMessage(MESSAGE_CODE_FORGET_ADMIN_PASSWORD));
 //    }
 
     @Override
-    public VerifyAdminResponseDTO verifyOtp(VerifyAdminRequestDTO verifyAdminRequestDTO, String requestId) {
-        logger.info("Processing the requestId : {} for verifying the otp ",requestId);
+    public VerifyAdminResponseDTO verifyOtp(VerifyAdminRequestDTO verifyAdminRequestDTO) {
+        logger.info("Processing for verifying the otp ");
         return adminMapper.verifyOTP(verifyAdminRequestDTO);
     }
 
     @Override
-    public AdminLogoutResponseDTO logout(AdminLogoutRequestDTO adminLogoutRequestDTO, String requestId) {
-        logger.info("Processing the requestId : {} for logout the admin user ",requestId);
+    public AdminLogoutResponseDTO logout(AdminLogoutRequestDTO adminLogoutRequestDTO) {
+        logger.info("Processing for logout the admin user ");
         adminMapper.logout(adminLogoutRequestDTO.getToken());
         logger.info("done");
         return adminMapper.mapToAdminLogoutInMessage(messageSourceUtil
@@ -56,60 +56,60 @@ public class AdminServiceImp implements AdminService {
     }
 
     @Override
-    public EditAdminResponseDTO edit(EditAdminRequestDTO editAdminRequestDTO, String requestId) {
-        adminMapper.edit(editAdminRequestDTO,requestId);
+    public EditAdminResponseDTO edit(EditAdminRequestDTO editAdminRequestDTO ) {
+        adminMapper.edit(editAdminRequestDTO);
         return adminMapper.mapToAdminEditInMessage(messageSourceUtil
                 .getMessage(MESSAGE_CODE_EDIT_ADMIN));
     }
 
     @Override
-    public ChangePasswordResponseDTO changePassword(ChangePasswordRequestDTO changePasswordRequestDTO, String requestId) {
-        adminMapper.changePassword(changePasswordRequestDTO,requestId);
+    public ChangePasswordResponseDTO changePassword(ChangePasswordRequestDTO changePasswordRequestDTO) {
+        adminMapper.changePassword(changePasswordRequestDTO);
         return adminMapper.mapToAdminChangePasswordInMessage(messageSourceUtil
                 .getMessage(MESSAGE_CODE_CHANGE_PASSWORD_ADMIN));
     }
 
     @Override
-    public RegisterResponseDTO registerAdmin(RegisterRequestDTO registerRequestDTO, String requestId) {
-        adminMapper.registerAdmin(registerRequestDTO,requestId);
+    public RegisterResponseDTO registerAdmin(RegisterRequestDTO registerRequestDTO) {
+        adminMapper.registerAdmin(registerRequestDTO);
         return adminMapper.mapToRegisterAdminInMessage(messageSourceUtil
                 .getMessage(MESSAGE_CODE_REGISTER_ADMIN));
     }
 
     @Override
-    public EditPhotoResponseDTO offerUpdate(EditPhotoRequestDTO editPhotoRequestDTO, String requestId) {
-        adminMapper.offerUpdate(editPhotoRequestDTO,requestId);
+    public EditPhotoResponseDTO offerUpdate(EditPhotoRequestDTO editPhotoRequestDTO) {
+        adminMapper.offerUpdate(editPhotoRequestDTO);
         return adminMapper.mapToEditPhotoRequestDTOAdminInMessage(messageSourceUtil
                 .getMessage(MESSAGE_CODE_UPDATE_OFFER_ADMIN));
 
     }
 
     @Override
-    public GetOfferPhotoResponseDTO getOfferPhoto(String requestId) {
-        return adminMapper.getOfferPhoto(requestId);
+    public GetOfferPhotoResponseDTO getOfferPhoto() {
+        return adminMapper.getOfferPhoto();
     }
 
     @Override
-    public GetAdminListResponseDTO getAllAdmin(String requestId) {
-        return adminMapper.getAllAdmin(requestId);
+    public GetAdminListResponseDTO getAllAdmin() {
+        return adminMapper.getAllAdmin();
     }
 
     @Override
-    public DeleteAdminResponseDTO deleteAdmin(DeleteAdminRequestDTO deleteAdmin, String requestId) {
-        adminMapper.deleteAdmin(deleteAdmin,requestId);
+    public DeleteAdminResponseDTO deleteAdmin(DeleteAdminRequestDTO deleteAdmin ) {
+        adminMapper.deleteAdmin(deleteAdmin);
         return adminMapper.mapToDeleteAdminInMessage(messageSourceUtil
                 .getMessage(MESSAGE_CODE_DELETE_ADMIN));
     }
 
     @Override
-    public GetAdminResponseDTO getAdmin(GetAdminRequestDTO getAdminRequestDTO, String requestId) {
-        logger.info("Processing the requestId : {} for getting admin ",requestId);
+    public GetAdminResponseDTO getAdmin(GetAdminRequestDTO getAdminRequestDTO) {
+        logger.info("Processing for getting admin ");
         return adminMapper.getAdmin(getAdminRequestDTO.getEmail());
     }
 
     @Override
-    public GetOfferPhotoResponseDTO getOffer(String requestId) {
-        logger.info("Processing the requestId : {} for getting offer photo ",requestId);
+    public GetOfferPhotoResponseDTO getOffer() {
+        logger.info("Processing for getting offer photo ");
         return adminMapper.getOffer();
     }
 

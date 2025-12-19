@@ -29,28 +29,31 @@ public class SecurityConfig {
 
         http
                 .csrf(csrf -> csrf.disable())
-                // ⭐ IMPORTANT: corsConfigurationSource use karo
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
                 .authorizeHttpRequests(auth -> auth
-                        // ⭐ OPTIONS allow (preflight)
+
+                        // Preflight
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // 🔓 PUBLIC APIs
                         .requestMatchers(
-                                "/auth/api/v1/admin/logIn",
-                                "/auth/api/v1/admin/forgetPassword",
-                                "/auth/api/v1/admin/verifyOtp",
-                                "/api/v1/auth/logIn",
-                                "/api/v1/auth/verify",
+                                "/api/v1/auth/**",
+                                "/auth/api/v1/admin/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/swagger-resources/**",
                                 "/webjars/**"
                         ).permitAll()
+
+                        // 🔒 PROTECTED
                         .anyRequest().authenticated()
                 )
-                .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint(new JwtAuthEntryPoint())
+                .exceptionHandling(ex ->
+                        ex.authenticationEntryPoint(new JwtAuthEntryPoint())
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -62,27 +65,21 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // ⭐ UPDATED CORS CONFIG
+    // ✅ CORS
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
 
         CorsConfiguration configuration = new CorsConfiguration();
-
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:5173",
                 "https://calm-flower-04b72f600.3.azurestaticapps.net"
         ));
-
-        configuration.setAllowedMethods(List.of(
-                "GET", "POST", "PUT", "DELETE", "OPTIONS"
-        ));
-
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
-        configuration.setExposedHeaders(List.of("requestId"));
+        configuration.setExposedHeaders(List.of(""));
         configuration.setAllowCredentials(true);
 
-        UrlBasedCorsConfigurationSource source =
-                new UrlBasedCorsConfigurationSource();
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
 
         return source;

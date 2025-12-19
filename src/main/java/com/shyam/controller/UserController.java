@@ -25,33 +25,31 @@ public class UserController {
     @Operation(summary = "Login a user", description = "Login a User.")
     @PostMapping("/logIn")
     public BaseResponseDTO<LogInResponseDTO> register(
-            @RequestHeader(value = "requestId", required = false) String requestId,
+            
             @RequestBody logInRequestDTO logInRequestDTO
             ){
-        logger.info("Received request for sigIn for requestId : {}",requestId);
-        var response = userService.logIn(logInRequestDTO,requestId);
-        return new BaseResponseDTO<>(response,null,requestId);
+        logger.info("Received request for sigIn");
+        var response = userService.logIn(logInRequestDTO);
+        return new BaseResponseDTO<>(response,null);
     }
 
     @Operation(summary = "Verify a user", description = "Verify a User.")
     @PostMapping("/verify")
     public BaseResponseDTO<OtpResponseDTO> verify(
-            @RequestHeader(value = "requestId", required = false) String requestId,
             @RequestBody OtpRequestDTO otpRequestDTO
     ){
-        logger.info("Received request for verify for requestId : {}",requestId);
-        var response = userService.verify(otpRequestDTO,requestId);
-        return new BaseResponseDTO<>(response, null,requestId);
+        logger.info("Received request for verify");
+        var response = userService.verify(otpRequestDTO);
+        return new BaseResponseDTO<>(response, null);
     }
 
     @Operation(summary = "Logout a user", description = "Logout a User.")
     @PostMapping("/logout")
     public BaseResponseDTO<LogoutResponseDTO> logout(
-            @RequestHeader(value = "requestId", required = false) String requestId,
             @RequestBody LogoutRequestDTO logoutRequestDTO
     ){
-        logger.info("Received request for logout for requestId : {}",requestId);
-        var response = userService.logout(logoutRequestDTO,requestId);
-        return new BaseResponseDTO<>(response, null,requestId);
+        logger.info("Received request for logout");
+        var response = userService.logout(logoutRequestDTO);
+        return new BaseResponseDTO<>(response, null);
     }
 }

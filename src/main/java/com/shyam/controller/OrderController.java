@@ -25,58 +25,53 @@ public class OrderController {
     @Operation(summary = "Create a order", description = "Creating a order.")
     @PostMapping("/createOrder")
     public BaseResponseDTO<AddOrderResponseDTO> addOrder(
-            @RequestBody AddOrderRequestDTO addOrderRequestDTO,
-            @RequestHeader(value = "requestId", required = false) String requestId
+            @RequestBody AddOrderRequestDTO addOrderRequestDTO
     ){
-        logger.info("Received request for create order for requestId : {}",requestId);
-        var response = orderService.createOrder(addOrderRequestDTO,requestId);
-        return new BaseResponseDTO<>(response,null,requestId);
+        logger.info("Received request for create order");
+        var response = orderService.createOrder(addOrderRequestDTO);
+        return new BaseResponseDTO<>(response,null);
     }
 
     @Operation(summary = "get order by Id", description = "Getting order details by Id.")
     @PostMapping("/getOrderById")
     public BaseResponseDTO<GetOrderByIdResponseDTO> getOrderById(
-            @RequestBody GetOrderByIdRequestDTO getOrderByIdRequestDTO,
-            @RequestHeader(value = "requestId", required = false) String requestId
+            @RequestBody GetOrderByIdRequestDTO getOrderByIdRequestDTO
     ){
-        logger.info("Received request for get order by Id for requestId : {}",requestId);
-        var response = orderService.getOrderById(getOrderByIdRequestDTO,requestId);
-        return new BaseResponseDTO<>(response,null,requestId);
+        logger.info("Received request for get order by Id");
+        var response = orderService.getOrderById(getOrderByIdRequestDTO);
+        return new BaseResponseDTO<>(response,null);
 
     }
 
     @Operation(summary = "get order by date", description = "Getting order details by date.")
     @PostMapping("/getOrderByDate")
     public BaseResponseDTO<GetOrderByDateResponseDTO> getOrderByDate(
-            @RequestBody GetOrderByDateRequestDTO getOrderBydateRequestDTO,
-            @RequestHeader(value = "requestId", required = false) String requestId
+            @RequestBody GetOrderByDateRequestDTO getOrderBydateRequestDTO
     ){
-        logger.info("Received request for get order by date for requestId : {}",requestId);
-        var response = orderService.getOrderByDate(getOrderBydateRequestDTO,requestId);
-        return new BaseResponseDTO<>(response,null,requestId);
+        logger.info("Received request for get order by date");
+        var response = orderService.getOrderByDate(getOrderBydateRequestDTO);
+        return new BaseResponseDTO<>(response,null);
 
     }
 
     @Operation(summary = "get total count order", description = "Getting total order of month")
     @PostMapping("/getTotalOrderMonth")
     public BaseResponseDTO<GetTotalOrderMonthResponse> getTotalOrderMonth(
-            @RequestHeader(value = "requestId", required = false) String requestId
     ){
-        logger.info("Received request for getting total order in month for requestId : {}",requestId);
-        var response = orderService.getTotalOrderMonth(requestId);
-        return new BaseResponseDTO<>(response,null,requestId);
+        logger.info("Received request for getting total order in month");
+        var response = orderService.getTotalOrderMonth();
+        return new BaseResponseDTO<>(response,null);
 
     }
 
     @Operation(summary = "Generate PDF Invoice", description = "Generates order invoice PDF and returns it as a downloadable file")
     @PostMapping("/getOrderInvoiceById")
     public BaseResponseDTO<GetOrderInvoiceResponse> getOrderInvoice(
-            @RequestHeader String requestId,
             @RequestBody GetOrderInvoiceRequest getOrderInvoiceRequest
     ){
-        logger.info("Received request for generate PDF Invoice for requestId : {}",requestId);
-        var response = orderService.getOrderInvoice(requestId,getOrderInvoiceRequest);
-        return new BaseResponseDTO<>(response,null,requestId);
+        logger.info("Received request for generate PDF Invoice");
+        var response = orderService.getOrderInvoice(getOrderInvoiceRequest);
+        return new BaseResponseDTO<>(response,null);
 
     }
 }

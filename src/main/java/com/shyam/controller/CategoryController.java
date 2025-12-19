@@ -23,60 +23,55 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping("/getAllCategory")
-    public BaseResponseDTO<GetCategoryResponseDTO> getAllCategories(@RequestHeader String requestId) {
-        log.info("Received request for getting all category for requestId : {}",requestId);
-        var response = categoryService.getAllCategories(requestId);
-        return new BaseResponseDTO<>(response,null,requestId);
+    public BaseResponseDTO<GetCategoryResponseDTO> getAllCategories() {
+        log.info("Received request for getting all category");
+        var response = categoryService.getAllCategories();
+        return new BaseResponseDTO<>(response,null);
     }
 
     @PostMapping("/getCategory")
     public BaseResponseDTO<GetCategoryByIdResponseDTO> getCategory(
-            @RequestHeader String requestId,
             @RequestBody GetCategoryByIdRequestDTO getCategoryByIdRequestDTO
     ) {
-        log.info("Received request for get category by Id for requestId : {}",requestId);
-        var response = categoryService.getCategory(requestId,getCategoryByIdRequestDTO);
-        return new BaseResponseDTO<>(response,null,requestId);
+        log.info("Received request for get category by Id");
+        var response = categoryService.getCategory(getCategoryByIdRequestDTO);
+        return new BaseResponseDTO<>(response,null);
     }
 
     @PostMapping("/addCategory")
     public BaseResponseDTO<AddCategoryResponseDTO> addCategories(
-            @RequestHeader String requestId,
             @RequestBody AddCategoryRequestDTO addCategoryRequestDTO
             ) {
-        log.info("Received request for adding category for requestId : {}",requestId);
-        var response =  categoryService.addCategories(addCategoryRequestDTO,requestId);
-        return new BaseResponseDTO<>(response,null,requestId);
+        log.info("Received request for adding category");
+        var response =  categoryService.addCategories(addCategoryRequestDTO);
+        return new BaseResponseDTO<>(response,null);
     }
 
     @PostMapping("/uploadExcel")
     public ResponseEntity<?> uploadExcel(
-            @RequestHeader String requestId,
             @RequestParam("file") MultipartFile file,
             @RequestParam("createdBy") String createdBy
     ) {
-        log.info("Received excel request for adding category for requestId : {}",requestId);
-        return categoryService.uploadExcel(requestId,file,createdBy);
+        log.info("Received excel request for adding category");
+        return categoryService.uploadExcel(file,createdBy);
     }
 
     @PutMapping("/updateCategory")
     public BaseResponseDTO<UpdateCategoryResponseDTO> updateCategories(
-            @RequestHeader String requestId,
             @RequestBody AddCategoryRequestDTO updateCategoryRequestDTO
     ) {
-        log.info("Received request for updating category for requestId : {}",requestId);
-        var response =  categoryService.updateCategoryRequestDTO(updateCategoryRequestDTO,requestId);
-        return new BaseResponseDTO<>(response,null,requestId);
+        log.info("Received request for updating category");
+        var response =  categoryService.updateCategoryRequestDTO(updateCategoryRequestDTO);
+        return new BaseResponseDTO<>(response,null);
     }
 
     @DeleteMapping("/deleteCategory")
     public BaseResponseDTO<UpdateCategoryResponseDTO> deleteCategory(
-            @RequestHeader String requestId,
             @RequestBody GetCategoryByIdRequestDTO updateCategoryRequestDTO
     ) {
-        log.info("Received request for deleting category for requestId : {}",requestId);
-        var response =  categoryService.deleteCategory(updateCategoryRequestDTO,requestId);
-        return new BaseResponseDTO<>(response,null,requestId);
+        log.info("Received request for deleting category");
+        var response =  categoryService.deleteCategory(updateCategoryRequestDTO);
+        return new BaseResponseDTO<>(response,null);
     }
 
 }

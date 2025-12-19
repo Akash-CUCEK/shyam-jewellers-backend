@@ -25,22 +25,22 @@ public class UserServiceImp implements UserService {
     private final MessageSourceUtil messageSourceUtil;
 
     @Override
-    public LogInResponseDTO logIn(logInRequestDTO logInRequestDTO, String requestId) {
-        logger.info("Processing the requestId : {} for logIn ",requestId);
+    public LogInResponseDTO logIn(logInRequestDTO logInRequestDTO) {
+        logger.info("Processing for logIn ");
         userMapper.logInMapper(logInRequestDTO);
         return userMapper.mapToUserLogInMessage(messageSourceUtil
                 .getMessage(MESSAGE_CODE_LOGIN_SEND_OTP));
     }
 
     @Override
-    public OtpResponseDTO verify(OtpRequestDTO otpRequestDTO, String requestId) {
-        logger.info("Processing the requestId : {} for verifying the otp ",requestId);
+    public OtpResponseDTO verify(OtpRequestDTO otpRequestDTO) {
+        logger.info("Processing for verifying the otp ");
         return userMapper.verifyOTP(otpRequestDTO);
     }
 
     @Override
-    public LogoutResponseDTO logout(LogoutRequestDTO logoutRequestDTO, String requestId) {
-        logger.info("Processing the requestId : {} for logout the user ",requestId);
+    public LogoutResponseDTO logout(LogoutRequestDTO logoutRequestDTO) {
+        logger.info("Processing for logout the user ");
         userMapper.logout(logoutRequestDTO.getToken());
         logger.info("done");
         return userMapper.mapToUserLogoutInMessage(messageSourceUtil

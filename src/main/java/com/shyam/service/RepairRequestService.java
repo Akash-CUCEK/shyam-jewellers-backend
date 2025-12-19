@@ -4,15 +4,15 @@ import com.shyam.dto.request.*;
 import com.shyam.dto.response.*;
 
 public interface RepairRequestService {
-    GetAllRepairResponseDTO getAllRepairRequests(String requestId);
+    GetAllRepairResponseDTO getAllRepairRequests();
 
-    CreateRepairResponseDTO createRepairRequest(String requestId, CreateRepairRequestDTO createRepairRequestDTO);
+    CreateRepairResponseDTO createRepairRequest(CreateRepairRequestDTO createRepairRequestDTO);
 
-    EditRepairResponseDTO editRepairRequest(String requestId, EditRepairRequestDTO editRepairRequestDTO);
+    EditRepairResponseDTO editRepairRequest(EditRepairRequestDTO editRepairRequestDTO);
 
-    GetAllRepairResponseDTO searchRepairRequest(String requestId, SearchRepairRequestDTO createRepairRequestDTO);
+    GetAllRepairResponseDTO searchRepairRequest(SearchRepairRequestDTO createRepairRequestDTO);
 
-    DeleteRepairResponseDTO deleteRepairRequest(String requestId, DeleteRepairRequestDTO deleteRepairRequestDTO);
+    DeleteRepairResponseDTO deleteRepairRequest(DeleteRepairRequestDTO deleteRepairRequestDTO);
 
-    RepairRequestResponseDTO getRepairRequestById(String requestId, RepairRequestRequestDTO repairRequestRequestDTO);
+    RepairRequestResponseDTO getRepairRequestById(RepairRequestRequestDTO repairRequestRequestDTO);
 }

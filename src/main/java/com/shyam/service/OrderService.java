@@ -7,14 +7,14 @@ import com.shyam.dto.request.GetOrderInvoiceRequest;
 import com.shyam.dto.response.*;
 
 public interface OrderService {
-    AddOrderResponseDTO createOrder(AddOrderRequestDTO addOrderRequestDTO, String requestId);
+    AddOrderResponseDTO createOrder(AddOrderRequestDTO addOrderRequestDTO );
 
-    GetOrderByIdResponseDTO getOrderById(GetOrderByIdRequestDTO getOrderByIdRequestDTO, String requestId);
+    GetOrderByIdResponseDTO getOrderById(GetOrderByIdRequestDTO getOrderByIdRequestDTO);
 
 
-    GetOrderByDateResponseDTO getOrderByDate(GetOrderByDateRequestDTO getOrderBydateRequestDTO, String requestId);
+    GetOrderByDateResponseDTO getOrderByDate(GetOrderByDateRequestDTO getOrderBydateRequestDTO );
 
-    GetTotalOrderMonthResponse getTotalOrderMonth(String requestId);
+    GetTotalOrderMonthResponse getTotalOrderMonth();
 
-    GetOrderInvoiceResponse getOrderInvoice(String requestId, GetOrderInvoiceRequest getOrderInvoiceRequest);
+    GetOrderInvoiceResponse getOrderInvoice(GetOrderInvoiceRequest getOrderInvoiceRequest);
 }

@@ -8,9 +8,9 @@ import com.shyam.dto.response.LogoutResponseDTO;
 import com.shyam.dto.response.OtpResponseDTO;
 
 public interface UserService {
-    LogInResponseDTO logIn(logInRequestDTO logInRequestDTO, String requestId);
+    LogInResponseDTO logIn(logInRequestDTO logInRequestDTO);
 
-    OtpResponseDTO verify(OtpRequestDTO otpRequestDTO, String requestId);
+    OtpResponseDTO verify(OtpRequestDTO otpRequestDTO);
 
-    LogoutResponseDTO logout(LogoutRequestDTO logoutRequestDTO, String requestId);
+    LogoutResponseDTO logout(LogoutRequestDTO logoutRequestDTO);
 }

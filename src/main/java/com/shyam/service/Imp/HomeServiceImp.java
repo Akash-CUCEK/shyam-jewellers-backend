@@ -21,29 +21,29 @@ public class HomeServiceImp implements HomeService {
     private final MessageSourceUtil messageSourceUtil;
 
     @Override
-    public GetAllHomeServiceResponseDTO getAllHomeServiceRequests(String requestId) {
+    public GetAllHomeServiceResponseDTO getAllHomeServiceRequests() {
         List<ServiceHome> services = homeServiceDAO.getAllHomeServiceRequests();
         return HomeServiceMapper.getAllHomeServiceRequests(services);
     }
     @Override
-    public GetAllHomeServiceResponseDTO searchHomeServiceRequest(String requestId, SearchHomeServiceRequestDTO searchHomeServiceRequestDTO) {
+    public GetAllHomeServiceResponseDTO searchHomeServiceRequest(SearchHomeServiceRequestDTO searchHomeServiceRequestDTO) {
         List<ServiceHome> services = homeServiceDAO.searchHomeServices(searchHomeServiceRequestDTO.getKeyword());
         return HomeServiceMapper.getAllHomeServiceRequests(services);
     }
 
     @Override
-    public HomeServiceResponseDTO getHomeServiceRequestById(String requestId, HomeServiceRequestDTO homeServiceRequestDTO) {
+    public HomeServiceResponseDTO getHomeServiceRequestById(HomeServiceRequestDTO homeServiceRequestDTO) {
         var service = homeServiceDAO.findHomeService(homeServiceRequestDTO.getServiceId());
         return HomeServiceMapper.getHomeServiceRequestById(service);
     }
 
     @Override
-    public GetAllHomeServiceResponseDTO getAllUserServiceRequests(String requestId) {
+    public GetAllHomeServiceResponseDTO getAllUserServiceRequests() {
         return null;
     }
 
     @Override
-    public CreateHomeServiceResponseDTO createHomeServiceRequests(String requestId, CreateHomeServiceRequestDTO createHomeServiceRequestDTO) {
+    public CreateHomeServiceResponseDTO createHomeServiceRequests(CreateHomeServiceRequestDTO createHomeServiceRequestDTO) {
         var service = HomeServiceMapper.createHomeServiceRequests(createHomeServiceRequestDTO);
         homeServiceDAO.saveHomeService(service);
         return HomeServiceMapper.maoToCreateHomeServiceResponseDTO(messageSourceUtil
@@ -51,7 +51,7 @@ public class HomeServiceImp implements HomeService {
     }
 
     @Override
-    public EditHomeServiceResponseDTO editHomeServiceRequest(String requestId, EditHomeServiceRequestDTO dto) {
+    public EditHomeServiceResponseDTO editHomeServiceRequest(EditHomeServiceRequestDTO dto) {
         var service = homeServiceDAO.findHomeService(dto.getServiceId());
         var serviceMapper = HomeServiceMapper.editHomeServiceRequest(service, dto);
         homeServiceDAO.saveHomeService(serviceMapper);
@@ -63,7 +63,7 @@ public class HomeServiceImp implements HomeService {
 
 
     @Override
-    public DeleteHomeServiceResponseDTO deleteHomeServiceRequest(String requestId, DeleteHomeServiceRequestDTO deleteHomeServiceRequestDTO) {
+    public DeleteHomeServiceResponseDTO deleteHomeServiceRequest(DeleteHomeServiceRequestDTO deleteHomeServiceRequestDTO) {
         var service = homeServiceDAO.findHomeService(deleteHomeServiceRequestDTO.getServiceId());
         homeServiceDAO.deleteHomeService(service.getServiceId());
         return HomeServiceMapper.mapTODeleteHomeServiceResponseDTO(messageSourceUtil

@@ -63,7 +63,6 @@ public class AdminMapper {
         var otp = generateOTP();
         admin.setOtp(otp);
         admin.setOtpGeneratedTime(LocalDateTime.now());
-        var savedAdmin = adminDAO.save(admin);
         sendVerificationEmail(forgetPasswordRequestDTO.getEmail(),otp);
     }
     public ForgetPasswordResponseDTO mapToAdminForgetPasswordMessage(String message) {
@@ -232,8 +231,8 @@ public class AdminMapper {
                 .build();
     }
 
-    public void edit(EditAdminRequestDTO editAdminRequestDTO, String requestId) {
-        logger.info("Processing in mapper for requestID: {}",requestId);
+    public void edit(EditAdminRequestDTO editAdminRequestDTO) {
+        logger.info("Processing in mapper ");
         var adminUser = adminDAO.findUserByEmail(editAdminRequestDTO.getEmail());
         adminUser.setName(editAdminRequestDTO.getName());
         adminUser.setPhoneNumber(editAdminRequestDTO.getPhoneNumber());
@@ -241,8 +240,8 @@ public class AdminMapper {
         adminDAO.save(adminUser);
     }
 
-    public void changePassword(ChangePasswordRequestDTO changePasswordRequestDTO, String requestId) {
-        logger.info("Processing change password in mapper for requestID: {}",requestId);
+    public void changePassword(ChangePasswordRequestDTO changePasswordRequestDTO) {
+        logger.info("Processing change password in mapper");
 
         var adminUser = adminDAO.findUserByEmail(changePasswordRequestDTO.getEmail());
         if (!passwordEncoder.matches(changePasswordRequestDTO.getPassword(), adminUser.getPassword())) {
@@ -275,7 +274,7 @@ public class AdminMapper {
                 .build();
     }
 
-    public void registerAdmin(RegisterRequestDTO registerRequestDTO, String requestId) {
+    public void registerAdmin(RegisterRequestDTO registerRequestDTO ) {
         if (adminDAO.findByEmail(registerRequestDTO.getEmail()).isPresent()) {
             throw new SYMException(
                     HttpStatus.CONFLICT,
@@ -312,7 +311,7 @@ public class AdminMapper {
                 .build();
     }
 
-    public void offerUpdate(EditPhotoRequestDTO editPhotoRequestDTO, String requestId) {
+    public void offerUpdate(EditPhotoRequestDTO editPhotoRequestDTO ) {
         OfferPhoto offer = adminDAO.getLatestOfferPhoto();
         if (offer == null) {
             offer = new OfferPhoto();
@@ -339,7 +338,7 @@ public class AdminMapper {
                 .build();
     }
 
-    public GetOfferPhotoResponseDTO getOfferPhoto(String requestId) {
+    public GetOfferPhotoResponseDTO getOfferPhoto() {
         var offer = adminDAO.getLatestOfferPhoto();
         if (offer == null) {
             logger.info("No offer photo found in DB.");
@@ -360,7 +359,7 @@ public class AdminMapper {
                 .build();
     }
 
-    public GetAdminListResponseDTO getAllAdmin(String requestId) {
+    public GetAdminListResponseDTO getAllAdmin() {
         List<AdminUsers> admins = adminDAO.findByRole(Role.ADMIN);
         List<GetAllAdminResponseDTO> responseDTOList = admins.stream()
                 .map(this::mapToGetAllAdminDTO)
@@ -381,7 +380,7 @@ public class AdminMapper {
                 .build();
     }
 
-    public void deleteAdmin(DeleteAdminRequestDTO deleteAdmin, String requestId) {
+    public void deleteAdmin(DeleteAdminRequestDTO deleteAdmin) {
         var admin = adminDAO.findUserByEmail(deleteAdmin.getEmail());
         adminDAO.delete(admin);
     }

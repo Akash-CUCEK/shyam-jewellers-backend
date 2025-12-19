@@ -24,24 +24,24 @@ public class RepairRequestServiceImp implements RepairRequestService {
     private final MessageSourceUtil messageSourceUtil;
 
     @Override
-    public GetAllRepairResponseDTO getAllRepairRequests(String requestId) {
+    public GetAllRepairResponseDTO getAllRepairRequests() {
         List<RepairService> repairRequest = repairRequestDAO.findAllRepairRequest();
         return RepairRequestMapper.getAllRepairRequests(repairRequest);
     }
     @Override
-    public RepairRequestResponseDTO getRepairRequestById(String requestId, RepairRequestRequestDTO repairRequestRequestDTO) {
+    public RepairRequestResponseDTO getRepairRequestById( RepairRequestRequestDTO repairRequestRequestDTO) {
         var service = repairRequestDAO.findRepairRequest(repairRequestRequestDTO.getServiceId());
         return RepairRequestMapper.getRepairRequestById(service);
     }
 
     @Override
-    public GetAllRepairResponseDTO searchRepairRequest(String requestId, SearchRepairRequestDTO searchRepairRequestDTO) {
+    public GetAllRepairResponseDTO searchRepairRequest(SearchRepairRequestDTO searchRepairRequestDTO) {
         List<RepairService> services = repairRequestDAO.searchRepairRequests(searchRepairRequestDTO.getKeyword());
         return RepairRequestMapper.getAllRepairRequests(services);
     }
 
     @Override
-    public CreateRepairResponseDTO createRepairRequest(String requestId, CreateRepairRequestDTO createRepairRequestDTO) {
+    public CreateRepairResponseDTO createRepairRequest(CreateRepairRequestDTO createRepairRequestDTO) {
         var service = RepairRequestMapper.createRepairRequest(createRepairRequestDTO);
         repairRequestDAO.saveRepairRequest(service);
         return RepairRequestMapper.maoToCreatRepairRequestResponseDTO(messageSourceUtil
@@ -49,7 +49,7 @@ public class RepairRequestServiceImp implements RepairRequestService {
     }
 
     @Override
-    public EditRepairResponseDTO editRepairRequest(String requestId, EditRepairRequestDTO editRepairRequestDTO) {
+    public EditRepairResponseDTO editRepairRequest(EditRepairRequestDTO editRepairRequestDTO) {
         var service = repairRequestDAO.findRepairRequest(editRepairRequestDTO.getServiceId());
         var serviceMapper = RepairRequestMapper.editRepairRequest(service, editRepairRequestDTO);
         repairRequestDAO.saveRepairRequest(serviceMapper);
@@ -60,7 +60,7 @@ public class RepairRequestServiceImp implements RepairRequestService {
 
 
     @Override
-    public DeleteRepairResponseDTO deleteRepairRequest(String requestId, DeleteRepairRequestDTO deleteRepairRequestDTO) {
+    public DeleteRepairResponseDTO deleteRepairRequest(DeleteRepairRequestDTO deleteRepairRequestDTO) {
         var service = repairRequestDAO.findRepairRequest(deleteRepairRequestDTO.getServiceId());
         repairRequestDAO.deleteRepairService(deleteRepairRequestDTO.getServiceId());
         return RepairRequestMapper .mapTODeleteRepairRequestResponseDTO(messageSourceUtil

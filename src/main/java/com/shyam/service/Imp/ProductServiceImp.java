@@ -26,9 +26,9 @@ public class ProductServiceImp implements ProductService {
 
     @Override
     @Transactional
-    public ProductAddResponseDTO addProduct(ProductAddRequestDTO productAddRequestDTO, String requestId) {
-        logger.info("Processing add product request: {}", requestId);
-        Products savedProduct = productMapper.addProduct(productAddRequestDTO, requestId);
+    public ProductAddResponseDTO addProduct(ProductAddRequestDTO productAddRequestDTO ) {
+        logger.info("Processing add product request" );
+        Products savedProduct = productMapper.addProduct(productAddRequestDTO );
         var message = messageSourceUtil.getMessage(MESSAGE_CODE_PRODUCT_ADDED);
         return productMapper.mapToAddProductResponse(savedProduct, message);
     }
@@ -36,10 +36,10 @@ public class ProductServiceImp implements ProductService {
 
     @Override
     @Transactional
-    public UpdateResponseDTO updateProduct(UpdateRequestDTO updateRequestDTO, String requestId) {
-        logger.info("Processing update product request: {}", requestId);
+    public UpdateResponseDTO updateProduct(UpdateRequestDTO updateRequestDTO ) {
+        logger.info("Processing update product request");
 
-        productMapper.updateProduct(updateRequestDTO,requestId);
+        productMapper.updateProduct(updateRequestDTO);
 
         var message = messageSourceUtil.getMessage(MESSAGE_CODE_PRODUCT_UPDATED);
 
@@ -48,49 +48,49 @@ public class ProductServiceImp implements ProductService {
 
     @Override
     @Transactional
-    public DeleteResponseDTO deleteProduct(DeleteProductRequestDTO deleteProductRequestDTO, String requestId) {
-        logger.info("Processing delete product request: {}", requestId);
+    public DeleteResponseDTO deleteProduct(DeleteProductRequestDTO deleteProductRequestDTO ) {
+        logger.info("Processing delete product request");
 
-        productMapper.deleteProduct(deleteProductRequestDTO.getName(),requestId);
+        productMapper.deleteProduct(deleteProductRequestDTO.getName());
 
         var message = messageSourceUtil.getMessage(MESSAGE_CODE_PRODUCT_DELETED);
 
         return productMapper.mapToDeleteProductResponse(message);    }
 
     @Override
-    public GetProductResponseDTO getPriceProduct(PriceRequestDTO priceRequestDTO, String requestId) {
-        logger.info("Processing to find product based on price  request: {}", requestId);
-        return productMapper.priceProduct(priceRequestDTO.getPrice(),requestId);
+    public GetProductResponseDTO getPriceProduct(PriceRequestDTO priceRequestDTO ) {
+        logger.info("Processing to find product based on price" );
+        return productMapper.priceProduct(priceRequestDTO.getPrice());
 
     }
 
     @Override
-    public CategoryResponseDTO getCategoryProduct(CategoryRequestDTO categoryRequestDTO, String requestId) {
-        logger.info("Processing to find product based on category for request: {}", requestId);
-        return productMapper.getCategoryProduct(categoryRequestDTO.getCategory(),requestId);
+    public CategoryResponseDTO getCategoryProduct(CategoryRequestDTO categoryRequestDTO ) {
+        logger.info("Processing to find product based on category" );
+        return productMapper.getCategoryProduct(categoryRequestDTO.getCategory());
     }
 
     @Override
-    public GenderResponseDTO getGenderProduct(GenderRequestDTO genderRequestDTO, String requestId) {
-        logger.info("Processing to find product based on gender for request: {}", requestId);
-        return productMapper.getGenderProduct(genderRequestDTO.getGender(),requestId);
+    public GenderResponseDTO getGenderProduct(GenderRequestDTO genderRequestDTO) {
+        logger.info("Processing to find product based on gender");
+        return productMapper.getGenderProduct(genderRequestDTO.getGender());
     }
 
     @Override
-    public ProductResponseDTO getNameProduct(GetProductByNameRequestDTO getProductByNameRequestDTO, String requestId) {
-        logger.info("Processing to find product based on name for request: {}", requestId);
+    public ProductResponseDTO getNameProduct(GetProductByNameRequestDTO getProductByNameRequestDTO ) {
+        logger.info("Processing to find product based on name");
         return productMapper.getNameProduct(getProductByNameRequestDTO.getName());
     }
 
     @Override
-    public GetProductResponseDTO getAllProduct(String requestId) {
-        logger.info("Processing to find all products for request: {}", requestId);
+    public GetProductResponseDTO getAllProduct() {
+        logger.info("Processing to find all products");
         return productMapper.getAllProduct();
     }
 
     @Override
-    public ProductFilterResponseDTO getFilteredProducts(ProductFilterRequestDTO filterDTO, String requestId) {
-        logger.info("Filtering products based on multiple filters for requestId: {}", requestId);
-        return productMapper.getFilteredProducts(filterDTO, requestId);
+    public ProductFilterResponseDTO getFilteredProducts(ProductFilterRequestDTO filterDTO) {
+        logger.info("Filtering products based on multiple filters");
+        return productMapper.getFilteredProducts(filterDTO);
     }
 }

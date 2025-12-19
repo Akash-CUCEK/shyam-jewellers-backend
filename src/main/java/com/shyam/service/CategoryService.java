@@ -10,17 +10,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface CategoryService {
-    GetCategoryResponseDTO getAllCategories(String requestId);
+    GetCategoryResponseDTO getAllCategories();
 
-    AddCategoryResponseDTO addCategories(AddCategoryRequestDTO addCategoryRequestDTO, String requestId);
+    AddCategoryResponseDTO addCategories(AddCategoryRequestDTO addCategoryRequestDTO);
 
-    UpdateCategoryResponseDTO updateCategoryRequestDTO(AddCategoryRequestDTO updateCategoryRequestDTO, String requestId);
+    UpdateCategoryResponseDTO updateCategoryRequestDTO(AddCategoryRequestDTO updateCategoryRequestDTO);
 
-    GetCategoryByIdResponseDTO getCategory(String requestId, GetCategoryByIdRequestDTO getCategoryByIdRequestDTO);
+    GetCategoryByIdResponseDTO getCategory(GetCategoryByIdRequestDTO getCategoryByIdRequestDTO);
 
-    UpdateCategoryResponseDTO deleteCategory(GetCategoryByIdRequestDTO updateCategoryRequestDTO, String requestId);
+    UpdateCategoryResponseDTO deleteCategory(GetCategoryByIdRequestDTO updateCategoryRequestDTO);
 
-    ResponseEntity<?> uploadExcel(String requestId, MultipartFile file, String createdBy);
+    ResponseEntity<?> uploadExcel(MultipartFile file, String createdBy);
 }
 
 

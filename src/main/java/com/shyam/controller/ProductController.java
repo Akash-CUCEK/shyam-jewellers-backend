@@ -11,9 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/products")
@@ -26,102 +23,93 @@ public class ProductController {
 //    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/addProduct")
     public BaseResponseDTO<ProductAddResponseDTO> addProduct(
-            @RequestHeader String requestId,
             @Valid @RequestBody ProductAddRequestDTO addRequestDTO
     ) {
-        logger.info("Add product | requestId: {}", requestId);
-        var response = productService.addProduct(addRequestDTO, requestId);
-        return new BaseResponseDTO<>(response, null, requestId);
+        logger.info("Add product");
+        var response = productService.addProduct(addRequestDTO);
+        return new BaseResponseDTO<>(response, null);
     }
 
     @Operation(summary = "Update product", description = "Admin updates a product")
 //    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/updateProduct")
     public BaseResponseDTO<UpdateResponseDTO> updateProduct(
-            @RequestHeader String requestId,
             @Valid @RequestBody UpdateRequestDTO updateRequestDTO
     ) {
-        logger.info("Update product | requestId: {}", requestId);
-        var response = productService.updateProduct(updateRequestDTO, requestId);
-        return new BaseResponseDTO<>(response, null, requestId);
+        logger.info("Update product" );
+        var response = productService.updateProduct(updateRequestDTO);
+        return new BaseResponseDTO<>(response, null);
     }
 
     @Operation(summary = "Delete product", description = "Admin deletes a product")
 //    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/deleteProduct")
     public BaseResponseDTO<DeleteResponseDTO> deleteProduct(
-            @RequestHeader String requestId,
             @Valid @RequestBody DeleteProductRequestDTO deleteProductRequestDTO
 
     ) {
-        logger.info("Delete product | requestId: {}", requestId);
-        var response = productService.deleteProduct(deleteProductRequestDTO, requestId);
-        return new BaseResponseDTO<>(response, null, requestId);
+        logger.info("Delete product ");
+        var response = productService.deleteProduct(deleteProductRequestDTO);
+        return new BaseResponseDTO<>(response, null );
     }
 
     @Operation(summary = "Get all products", description = "Get all products")
     @PostMapping("/search/getAllProducts")
-    public BaseResponseDTO<GetProductResponseDTO> getAllProduct(
-            @RequestHeader(value = "requestId", required = false) String requestId
-    ) {
-        logger.info("Received request to get all products | requestId: {}", requestId);
-        var response = productService.getAllProduct(requestId);
-        return new BaseResponseDTO<>(response, null, requestId);
+    public BaseResponseDTO<GetProductResponseDTO> getAllProduct()
+    {
+        logger.info("Received request to get all products" );
+        var response = productService.getAllProduct();
+        return new BaseResponseDTO<>(response, null);
     }
 
     @Operation(summary = "Get products by price", description = "Search product(s) within price range")
     @PostMapping("/search/price")
     public BaseResponseDTO<GetProductResponseDTO> getPriceProduct(
-            @RequestHeader String requestId,
             @Valid @RequestBody PriceRequestDTO priceRequestDTO
     ) {
-        logger.info("Search product by price | requestId: {}", requestId);
-        var response = productService.getPriceProduct(priceRequestDTO, requestId);
-        return new BaseResponseDTO<>(response, null, requestId);
+        logger.info("Search product by price" );
+        var response = productService.getPriceProduct(priceRequestDTO);
+        return new BaseResponseDTO<>(response, null);
     }
 
     @Operation(summary = "Get products by Name", description = "Getting product by Product Name")
     @PostMapping("/search/name")
     public BaseResponseDTO<ProductResponseDTO> getNameProduct(
-            @RequestHeader String requestId,
             @Valid @RequestBody GetProductByNameRequestDTO getProductByNameRequestDTO
     ) {
-        logger.info("Search product by name | requestId: {}", requestId);
-        var response = productService.getNameProduct(getProductByNameRequestDTO, requestId);
-        return new BaseResponseDTO<>(response, null, requestId);
+        logger.info("Search product by name");
+        var response = productService.getNameProduct(getProductByNameRequestDTO);
+        return new BaseResponseDTO<>(response, null);
     }
 
     @Operation(summary = "Get products by category", description = "Search product(s) by category")
     @PostMapping("/search/category")
     public BaseResponseDTO<CategoryResponseDTO> getCategoryProduct(
-            @RequestHeader String requestId,
             @Valid @RequestBody CategoryRequestDTO categoryRequestDTO
     ) {
-        logger.info("Search product by category | requestId: {}", requestId);
-        var response = productService.getCategoryProduct(categoryRequestDTO, requestId);
-        return new BaseResponseDTO<>(response, null, requestId);
+        logger.info("Search product by category" );
+        var response = productService.getCategoryProduct(categoryRequestDTO);
+        return new BaseResponseDTO<>(response, null);
     }
 
     @Operation(summary = "Get products by gender", description = "Search product(s) by gender")
     @PostMapping("/search/gender")
     public BaseResponseDTO<GenderResponseDTO> getGenderProduct(
-            @RequestHeader String requestId,
             @Valid @RequestBody GenderRequestDTO genderRequestDTO
     ) {
-        logger.info("Search product by gender | requestId: {}", requestId);
-        var response = productService.getGenderProduct(genderRequestDTO, requestId);
-        return new BaseResponseDTO<>(response, null, requestId);
+        logger.info("Search product by gender" );
+        var response = productService.getGenderProduct(genderRequestDTO);
+        return new BaseResponseDTO<>(response, null);
     }
 
     @Operation(summary = "Get filtered products", description = "Returns products based on multiple filters")
     @PostMapping("/products/filter")
     public BaseResponseDTO<ProductFilterResponseDTO> getFilteredProducts(
-            @RequestHeader String requestId,
             @Valid @RequestBody ProductFilterRequestDTO filterDTO
     ) {
-        logger.info("Filtering products | requestId: {}", requestId);
-        var response = productService.getFilteredProducts(filterDTO, requestId);
-        return new BaseResponseDTO<>(response, null, requestId);
+        logger.info("Filtering products");
+        var response = productService.getFilteredProducts(filterDTO);
+        return new BaseResponseDTO<>(response, null );
     }
 
 

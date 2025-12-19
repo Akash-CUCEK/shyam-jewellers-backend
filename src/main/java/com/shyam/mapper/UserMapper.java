@@ -37,7 +37,6 @@ public class UserMapper {
         Optional<Users> existingUserOpt = userDAO.findOnlyUser(dto.getEmail());
 
         var otp = generateOTP();
-
         if (existingUserOpt.isPresent()) {
             Users existingUser = existingUserOpt.get();
             existingUser.setOtp(otp);
@@ -82,7 +81,6 @@ public class UserMapper {
         var user = userDAO.findUser(otpRequestDTO.getEmail()); // may throw SYMException
 
         try {
-            // Check if OTP has expired
             if (user.getOtpGeneratedTime() == null ||
                     user.getOtpGeneratedTime().plusMinutes(5).isBefore(LocalDateTime.now())) {
 

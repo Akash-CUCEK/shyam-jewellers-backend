@@ -51,7 +51,7 @@ public class OrderDAO {
     }
 
 
-    public void save(Order addOrderRequestDTO, String requestId) {
+    public void save(Order addOrderRequestDTO) {
         try {
             log.debug("Saving the new order:");
             orderRepository.save(addOrderRequestDTO);
@@ -61,7 +61,7 @@ public class OrderDAO {
                     HttpStatus.INTERNAL_SERVER_ERROR,
                     SYMErrorType.GENERIC_EXCEPTION,
                     ErrorCodeConstants.ERROR_CODE_AUTHZ_UNKNOWN,
-                    String.format("Failed to save new order for requestId: {} ",requestId),
+                    String.format("Failed to save new order"),
                     e.getMessage()
             );
         }

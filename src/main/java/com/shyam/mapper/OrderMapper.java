@@ -26,20 +26,20 @@ public class OrderMapper {
 
     private final OrderDAO orderDAO;
 
-    public void createOrder(AddOrderRequestDTO addOrderRequestDTO, String requestId) {
-        log.debug("Saving the new order for requestId : {}", requestId);
-        var order = mapToOrderEntity(addOrderRequestDTO, requestId);
-        orderDAO.save(order, requestId);
+    public void createOrder(AddOrderRequestDTO addOrderRequestDTO ) {
+        log.debug("Saving the new order" );
+        var order = mapToOrderEntity(addOrderRequestDTO);
+        orderDAO.save(order);
     }
 
-    public GetOrderByIdResponseDTO getOrderByOrderId(GetOrderByIdRequestDTO getOrderByIdRequestDTO, String requestId) {
-        log.debug("Getting the order by Id for requestId : {}", requestId);
+    public GetOrderByIdResponseDTO getOrderByOrderId(GetOrderByIdRequestDTO getOrderByIdRequestDTO) {
+        log.debug("Getting the order by Id");
         var order = orderDAO.findOrderByOrderId(getOrderByIdRequestDTO.getOrderId());
         return mapToOrderEntity(order);
     }
 
-    public GetOrderByDateResponseDTO getOrderByDate(GetOrderByDateRequestDTO getOrderBydateRequestDTO, String requestId) {
-        log.debug("Getting the order by date for requestId : {}", requestId);
+    public GetOrderByDateResponseDTO getOrderByDate(GetOrderByDateRequestDTO getOrderBydateRequestDTO ) {
+        log.debug("Getting the order by date");
         List<Order> orderList= orderDAO.findOrderByOrderDate(getOrderBydateRequestDTO);
 
         List<GetOrderByIdResponseDTO> responseList = orderList.stream()
@@ -80,7 +80,7 @@ public class OrderMapper {
                 .build();
     }
 
-    public Order mapToOrderEntity(AddOrderRequestDTO dto, String requestId) {
+    public Order mapToOrderEntity(AddOrderRequestDTO dto) {
         LocalDateTime dateTime = dto.getOrderDateTime() != null
                 ? dto.getOrderDateTime()
                 : LocalDateTime.now();
@@ -105,8 +105,8 @@ public class OrderMapper {
                 .build();
     }
 
-    public GetTotalOrderMonthResponse getTotalOrderMonth(String requestId) {
-        log.debug("Getting total order of the month for requestId: {}", requestId);
+    public GetTotalOrderMonthResponse getTotalOrderMonth() {
+        log.debug("Getting total order of the month");
         LocalDate now = LocalDate.now();
         LocalDate firstDayOfMonth = now.withDayOfMonth(1);
         LocalDate lastDayOfMonth = now.withDayOfMonth(now.lengthOfMonth());

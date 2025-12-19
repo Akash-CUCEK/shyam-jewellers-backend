@@ -12,5 +12,4 @@ import java.io.Serializable;
 public class BaseResponseDTO<T extends Serializable> implements Serializable {
     private T response;
     private ErrorResponseDTO errors;
-    private String requestId;
 }

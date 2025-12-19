@@ -46,7 +46,7 @@ public class CategoryMapper {
         return category;
     }
 
-    public GetCategoryResponseDTO getAllCategories(String requestId) {
+    public GetCategoryResponseDTO getAllCategories() {
         log.debug("Started to get all category");
         List<Category> categories = categoryDAO.findAllCategory();
 
@@ -86,7 +86,7 @@ public class CategoryMapper {
                 .build();
     }
 
-    public void updateCategoryRequestDTO(AddCategoryRequestDTO updateCategoryRequestDTO, String requestId) {
+    public void updateCategoryRequestDTO(AddCategoryRequestDTO updateCategoryRequestDTO) {
         log.debug("Started to update new category");
         var category  = categoryDAO.findByName(updateCategoryRequestDTO.getName());
         category.setName(updateCategoryRequestDTO.getName());

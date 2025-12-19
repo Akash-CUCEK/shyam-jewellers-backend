@@ -24,33 +24,33 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public AddOrderResponseDTO createOrder(AddOrderRequestDTO addOrderRequestDTO, String requestId) {
-        logger.info("Create order processing the request for requestId : {}",requestId);
-        orderMapper.createOrder(addOrderRequestDTO,requestId);
+    public AddOrderResponseDTO createOrder(AddOrderRequestDTO addOrderRequestDTO) {
+        logger.info("Create order processing the request");
+        orderMapper.createOrder(addOrderRequestDTO);
         return orderMapper.mapToOrderCreateInMessage(messageSourceUtil
                 .getMessage(MESSAGE_CODE_CREATE_ORDER));
     }
 
     @Override
-    public GetOrderByIdResponseDTO getOrderById(GetOrderByIdRequestDTO getOrderByIdRequestDTO, String requestId) {
-        logger.info("get by Id processing the request for requestId : {}",requestId);
-        return orderMapper.getOrderByOrderId(getOrderByIdRequestDTO,requestId);
+    public GetOrderByIdResponseDTO getOrderById(GetOrderByIdRequestDTO getOrderByIdRequestDTO) {
+        logger.info("get by Id processing the request");
+        return orderMapper.getOrderByOrderId(getOrderByIdRequestDTO);
     }
 
     @Override
-    public GetOrderByDateResponseDTO getOrderByDate(GetOrderByDateRequestDTO getOrderBydateRequestDTO, String requestId) {
-        logger.info("get by date processing the request for requestId : {}",requestId);
-        return orderMapper.getOrderByDate(getOrderBydateRequestDTO,requestId);
+    public GetOrderByDateResponseDTO getOrderByDate(GetOrderByDateRequestDTO getOrderBydateRequestDTO) {
+        logger.info("get by date processing the request");
+        return orderMapper.getOrderByDate(getOrderBydateRequestDTO);
     }
 
     @Override
-    public GetTotalOrderMonthResponse getTotalOrderMonth(String requestId) {
+    public GetTotalOrderMonthResponse getTotalOrderMonth() {
         logger.info("");
-        return orderMapper.getTotalOrderMonth(requestId);
+        return orderMapper.getTotalOrderMonth();
     }
 
     @Override
-    public GetOrderInvoiceResponse getOrderInvoice(String requestId, GetOrderInvoiceRequest getOrderInvoiceRequest) {
+    public GetOrderInvoiceResponse getOrderInvoice(GetOrderInvoiceRequest getOrderInvoiceRequest) {
         logger.info("");
         return orderMapper.getOrderInvoice(getOrderInvoiceRequest.getOrderId());
     }

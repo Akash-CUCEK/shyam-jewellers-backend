@@ -21,8 +21,8 @@ public class ProductMapper {
     private static final Logger logger = LoggerFactory.getLogger(ProductMapper.class);
     private final ProductDAO productDAO;
 
-    public Products addProduct(ProductAddRequestDTO dto, String requestId) {
-        logger.info("Adding product in mapper for requestId: {}", requestId);
+    public Products addProduct(ProductAddRequestDTO dto) {
+        logger.info("Adding product in mapper");
         Products product = new Products();
 
         product.setCategory(dto.getCategory());
@@ -50,8 +50,8 @@ public class ProductMapper {
                 .build();
     }
 
-    public void updateProduct(UpdateRequestDTO updateRequestDTO, String requestId) {
-        logger.info("Updating product in mapper for requestId: {}", requestId);
+    public void updateProduct(UpdateRequestDTO updateRequestDTO ) {
+        logger.info("Updating product in mapper" );
 
         // 1. Fetch product by name
         var product = productDAO.findProduct(updateRequestDTO.getName());
@@ -74,7 +74,7 @@ public class ProductMapper {
         // 3. Save updated product
         productDAO.save(product);
 
-        logger.info("Product updated successfully for request: {}", requestId);
+        logger.info("Product updated successfully");
     }
 
 
@@ -84,11 +84,11 @@ public class ProductMapper {
                 .build();
     }
 
-    public void deleteProduct(String name, String requestId) {
-        logger.info("Deleting product in mapper for requestId: {}", requestId);
+    public void deleteProduct(String name) {
+        logger.info("Deleting product in mapper");
         var product =productDAO.findProduct(name);
         productDAO.delete(product);
-        logger.info("Product '{}' deleted successfully for requestId: {}", name, requestId);
+        logger.info("Product '{}' deleted successfully", name);
     }
 
     public DeleteResponseDTO mapToDeleteProductResponse(String message) {
@@ -97,8 +97,8 @@ public class ProductMapper {
                 .build();
     }
 
-    public GetProductResponseDTO priceProduct(BigDecimal price, String requestId) {
-        logger.info("Finding products under price {} for requestId: {}", price, requestId);
+    public GetProductResponseDTO priceProduct(BigDecimal price) {
+        logger.info("Finding products under price {}", price);
 
         List<Products> products = productDAO.priceProduct(price);
 
@@ -111,8 +111,8 @@ public class ProductMapper {
                 .build();
     }
 
-    public CategoryResponseDTO getCategoryProduct(String category, String requestId) {
-        logger.info("Finding products under category {} for requestId: {}", category, requestId);
+    public CategoryResponseDTO getCategoryProduct(String category) {
+        logger.info("Finding products under category :{}", category);
 
         List<Products> products = productDAO.getCategoryProduct(category);
 
@@ -125,8 +125,8 @@ public class ProductMapper {
                 .build();
     }
 
-    public GenderResponseDTO getGenderProduct(String gender, String requestId) {
-        logger.info("Finding products under gender {} for requestId: {}", gender, requestId);
+    public GenderResponseDTO getGenderProduct(String gender) {
+        logger.info("Finding products under gender {}", gender);
 
         List<Products> products = productDAO.getGenderProduct(gender);
 
@@ -184,7 +184,7 @@ public class ProductMapper {
     }
 
 
-    public ProductFilterResponseDTO getFilteredProducts(ProductFilterRequestDTO filterDTO, String requestId) {
+    public ProductFilterResponseDTO getFilteredProducts(ProductFilterRequestDTO filterDTO) {
         List<Products> products = productDAO.findProductsByFilters(
                 filterDTO.getCategory(),
                 filterDTO.getMinPrice(),

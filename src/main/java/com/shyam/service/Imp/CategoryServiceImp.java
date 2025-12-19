@@ -45,13 +45,13 @@ public class CategoryServiceImp implements CategoryService {
     private final CategoryExcelValidation categoryExcelValidation;
 
     @Override
-    public GetCategoryResponseDTO getAllCategories(String requestId) {
+    public GetCategoryResponseDTO getAllCategories() {
         log.info("Processing the request for get category");
-        return categoryMapper.getAllCategories(requestId);
+        return categoryMapper.getAllCategories();
     }
 
     @Override
-    public AddCategoryResponseDTO addCategories(AddCategoryRequestDTO addCategoryRequestDTO, String requestId) {
+    public AddCategoryResponseDTO addCategories(AddCategoryRequestDTO addCategoryRequestDTO ) {
         log.info("Processing the request for adding category");
 
         if (!categoryDAO.isNameAvailable(addCategoryRequestDTO.getName())) {
@@ -68,23 +68,23 @@ public class CategoryServiceImp implements CategoryService {
     }
 
     @Override
-    public UpdateCategoryResponseDTO updateCategoryRequestDTO(AddCategoryRequestDTO updateCategoryRequestDTO, String requestId) {
+    public UpdateCategoryResponseDTO updateCategoryRequestDTO(AddCategoryRequestDTO updateCategoryRequestDTO ) {
         log.info("Processing the request for updating category");
-        categoryMapper.updateCategoryRequestDTO(updateCategoryRequestDTO,requestId);
+        categoryMapper.updateCategoryRequestDTO(updateCategoryRequestDTO);
         return categoryMapper.mapToUpdateCategoryInMessage(messageSourceUtil
                 .getMessage(MESSAGE_CODE_UPDATE_CATEGORY));
     }
 
     @Override
-    public GetCategoryByIdResponseDTO getCategory(String requestId, GetCategoryByIdRequestDTO getCategoryByIdRequestDTO) {
-        log.info("Received request Id {} for getting category By Id ",requestId);
+    public GetCategoryByIdResponseDTO getCategory(GetCategoryByIdRequestDTO getCategoryByIdRequestDTO) {
+        log.info("Received request for getting category By Id ");
         var category  = categoryDAO.findById(getCategoryByIdRequestDTO.getId());
          return CategoryMapper.getCategory(category);
     }
 
     @Override
-    public UpdateCategoryResponseDTO deleteCategory(GetCategoryByIdRequestDTO updateCategoryRequestDTO, String requestId) {
-        log.info("Received request Id {} for deleting category By Id ",requestId);
+    public UpdateCategoryResponseDTO deleteCategory(GetCategoryByIdRequestDTO updateCategoryRequestDTO ) {
+        log.info("Received request for deleting category By Id ");
         var category  = categoryDAO.findById(updateCategoryRequestDTO.getId());
         categoryDAO.deleteCategory(updateCategoryRequestDTO.getId());
         return CategoryMapper.mapToDeleteCategoryInMessage(messageSourceUtil
@@ -92,7 +92,7 @@ public class CategoryServiceImp implements CategoryService {
     }
 
     @Override
-    public ResponseEntity<?> uploadExcel(String requestId, MultipartFile file, String createdBy) {
+    public ResponseEntity<?> uploadExcel(MultipartFile file, String createdBy) {
         try {
             try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
 

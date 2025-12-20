@@ -15,13 +15,9 @@ import java.util.Map;
 public class RefreshTokenController {
     private final JwtUtil jwtUtil;
 
-    @PostMapping("/refresh")
+    @PostMapping("/refreshToken")
     public ResponseEntity<?> refreshToken(@CookieValue("refreshToken") String refreshToken) {
         log.info("Refresh token request received");
-        if (jwtUtil.validateToken(refreshToken)) {
-            log.warn("Invalid token");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
-        }
         var newAccessToken = JwtUtil.generateAccessToken(jwtUtil.getUsername(refreshToken), jwtUtil.getRole(refreshToken));
         log.info("Error while generating refresh token");
         return ResponseEntity.ok(Map.of("accessToken", newAccessToken));

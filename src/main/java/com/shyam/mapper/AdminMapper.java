@@ -59,70 +59,13 @@ public class AdminMapper {
     }
 
     public void forgetPassword(ForgetPasswordRequestDTO forgetPasswordRequestDTO) {
-        var admin = adminDAO.findUserByEmail(forgetPasswordRequestDTO.getEmail());
-        var otp = generateOTP();
-        admin.setOtp(otp);
-        admin.setOtpGeneratedTime(LocalDateTime.now());
-        sendVerificationEmail(forgetPasswordRequestDTO.getEmail(),otp);
+
     }
     public ForgetPasswordResponseDTO mapToAdminForgetPasswordMessage(String message) {
         return ForgetPasswordResponseDTO.builder()
                 .response(message)
                 .build();
     }
-
-//    public void forgetVerifyOtp(VerifyAdminRequestDTO verifyAdminRequestDTO) {
-//        logger.debug("Calling the service for forget Password to validate the OTP");
-//        var user = adminDAO.findUserByEmail(verifyAdminRequestDTO.getEmail());
-//
-//        try {
-//            // Check if OTP has expired
-//            if (user.getOtpGeneratedTime() == null ||
-//                    user.getOtpGeneratedTime().plusMinutes(5).isBefore(LocalDateTime.now())) {
-//
-//                throw new SYMException(
-//                        HttpStatus.UNAUTHORIZED,
-//                        SYMErrorType.GENERIC_EXCEPTION,
-//                        ErrorCodeConstants.ERROR_CODE_AUTHZ_OTP_EXPIRED,
-//                        "OTP expired",
-//                        String.format("OTP expired for email: %s", verifyAdminRequestDTO.getEmail())
-//                );
-//            }
-//            // Check if OTP is correct
-//            if (verifyAdminRequestDTO.getOtp().equals(user.getOtp())) {
-//                logger.info("Otp verified successfully");
-//                var admin = adminDAO.findUserByEmail(verifyAdminRequestDTO.getEmail());
-//                admin.setPassword(passwordEncoder.encode(verifyAdminRequestDTO.getPassword()));
-//                admin.setOtp(null);
-//                admin.setOtpGeneratedTime(null);
-//                adminDAO.save(admin);
-//
-//            } else {
-//                throw new SYMException(
-//                        HttpStatus.UNAUTHORIZED,
-//                        SYMErrorType.GENERIC_EXCEPTION,
-//                        ErrorCodeConstants.ERROR_CODE_AUTHZ_INVALID_OTP,
-//                        "Invalid OTP",
-//                        String.format("OTP entered: %s is incorrect for email: %s",
-//                                verifyAdminRequestDTO.getOtp(), verifyAdminRequestDTO.getEmail())
-//                );
-//            }
-//
-//        } catch (SYMException e) {
-//            logger.error("Password Reset SYMException during OTP verification: {}", e.getMessage());
-//            throw e;
-//
-//        } catch (Exception e) {
-//            logger.error("Unexpected error during OTP verification", e);
-//            throw new SYMException(
-//                    HttpStatus.INTERNAL_SERVER_ERROR,
-//                    SYMErrorType.GENERIC_EXCEPTION,
-//                    ErrorCodeConstants.ERROR_CODE_AUTHZ_UNKNOWN,
-//                    "Something went wrong",
-//                    e.getMessage()
-//            );
-//        }
-//    }
 
     public VerifyForgetPasswordResponseDTO mapToVerifyForgetOtpInMessage(String message) {
         return VerifyForgetPasswordResponseDTO.builder()
@@ -212,11 +155,7 @@ public class AdminMapper {
     }
 
     public void logout(String token) {
-        logger.info("Processing in mapper");
-        var expiryInSeconds = (JwtUtil.getExpiry(token).getTime()
-                - System.currentTimeMillis()) / 1000;
 
-        tokenBlacklistService.blacklistToken(token,expiryInSeconds);
     }
 
     public AdminLogoutResponseDTO mapToAdminLogoutInMessage(String message) {

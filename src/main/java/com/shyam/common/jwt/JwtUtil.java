@@ -19,15 +19,11 @@ import java.util.Date;
 public class JwtUtil {
 
     private final TokenBlacklistService tokenBlacklistService;
-    private final RedisTemplate<String, String> redisTemplate;
-    private static final String PREFIX = "refreshToken:";
-    private static final long REFRESH_TOKEN_EXPIRY = 24 * 60 * 60;
-
     private static final SecretKey SECRET_KEY = Keys.hmacShaKeyFor(
             JwtConstants.SECRET.getBytes(StandardCharsets.UTF_8)
     );
 
-    private static final long ACCESS_TOKEN_EXPIRATION_TIME = 20 * 60 * 1000;
+    private static final long ACCESS_TOKEN_EXPIRATION_TIME = 10 * 60 * 1000;
 
     public static String generateAccessToken(String username, String role) {
         return Jwts.builder()
@@ -54,7 +50,6 @@ public class JwtUtil {
             return false;
         }
     }
-
     public static String getUsername(String token) {
         return getClaims(token).getSubject();
     }

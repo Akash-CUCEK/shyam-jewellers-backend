@@ -14,10 +14,8 @@ import java.util.Collections;
 public class GlobalException {
     @ExceptionHandler(SYMException.class)
     public ResponseEntity<ErrorResponseDTO> handleSRYException(SYMException sym){
-        // Create a user-friendly error message
         var errorMessagesDTO = new ErrorMessagesDTO(sym.getMessage());
 
-        // Prepare ErrorResponseDTO with necessary details
         var errorResponseDTO = new ErrorResponseDTO(
                 Collections.singletonList(errorMessagesDTO),  // List of messages
                 LocalDateTime.now(),                          // Current timestamp

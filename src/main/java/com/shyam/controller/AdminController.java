@@ -48,16 +48,15 @@ public class AdminController {
         return new BaseResponseDTO<>(response,null);
     }
 
-//    @Operation(summary = "Verify otp for password reset", description = "Verify otp for password reset")
-//    @PostMapping("/verifyPasswordOtp")
-//    public BaseResponseDTO<VerifyForgetPasswordResponseDTO> forgetVerifyPassword(
-//            @RequestHeader String ,
-//            @RequestBody VerifyAdminRequestDTO verifyAdminRequestDTO
-//    ){
-//        logger.info("Received request for verify otp for password reset for  : {}",);
-//        var response = adminService.forgetVerifyOtp(verifyAdminRequestDTO,);
-//        return new BaseResponseDTO<>(response,null,);
-//    }
+    @Operation(summary = "Verify otp for password reset", description = "Verify otp for password reset")
+    @PostMapping("/verifyPasswordOtp")
+    public BaseResponseDTO<VerifyForgetPasswordResponseDTO> forgetVerifyPassword(
+            @RequestBody VerifyAdminRequestDTO verifyAdminRequestDTO
+    ){
+        logger.info("Received request for verify otp for password reset :{}",verifyAdminRequestDTO);
+        var response = adminService.forgetVerifyOtp(verifyAdminRequestDTO);
+        return new BaseResponseDTO<>(response,null);
+    }
 
 
     @Operation(summary = "Offer Section", description = "Adding offer photo.")

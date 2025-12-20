@@ -10,4 +10,5 @@ import lombok.*;
 public class VerifyAdminRequestDTO {
     private String email;
     private String otp;
+    private String password;
 }

@@ -1,17 +1,17 @@
 package com.shyam.controller;
 
 import com.shyam.common.exception.dto.BaseResponseDTO;
-import com.shyam.dto.request.LogoutRequestDTO;
 import com.shyam.dto.request.OtpRequestDTO;
 import com.shyam.dto.request.logInRequestDTO;
-import com.shyam.dto.response.LogInResponseDTO;
-import com.shyam.dto.response.LogoutResponseDTO;
-import com.shyam.dto.response.OtpResponseDTO;
+import com.shyam.dto.response.*;
 import com.shyam.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -33,23 +33,47 @@ public class UserController {
         return new BaseResponseDTO<>(response,null);
     }
 
-    @Operation(summary = "Verify a user", description = "Verify a User.")
     @PostMapping("/verify")
-    public BaseResponseDTO<OtpResponseDTO> verify(
+    public ResponseEntity<BaseResponseDTO<OtpResponseDTO>> verify(
             @RequestBody OtpRequestDTO otpRequestDTO
-    ){
+    ) {
         logger.info("Received request for verify");
-        var response = userService.verify(otpRequestDTO);
-        return new BaseResponseDTO<>(response, null);
+
+        ResponseEntity<OtpResponseDTO> responseEntity =
+                userService.verify(otpRequestDTO);
+
+        return ResponseEntity
+                .status(responseEntity.getStatusCode())
+                .headers(responseEntity.getHeaders())
+                .body(new BaseResponseDTO<>(
+                        responseEntity.getBody(),
+                        null
+                ));
     }
 
     @Operation(summary = "Logout a user", description = "Logout a User.")
     @PostMapping("/logout")
-    public BaseResponseDTO<LogoutResponseDTO> logout(
-            @RequestBody LogoutRequestDTO logoutRequestDTO
-    ){
-        logger.info("Received request for logout");
-        var response = userService.logout(logoutRequestDTO);
-        return new BaseResponseDTO<>(response, null);
+    public ResponseEntity<BaseResponseDTO<LogoutResponseDTO>> logout(
+            @RequestHeader("Authorization") String authorization,
+            @CookieValue(value = "refreshToken", required = false) String refreshToken
+    ) {
+        logger.info("Received request for log out ");
+        String accessToken = authorization.replace("Bearer ", "");
+
+        LogoutResponseDTO response =
+                userService.logout(accessToken, refreshToken);
+
+        ResponseCookie deleteCookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("Strict")
+                .path("/")
+                .maxAge(0)
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, deleteCookie.toString())
+                .body(new BaseResponseDTO<>(response, null));
     }
+
 }

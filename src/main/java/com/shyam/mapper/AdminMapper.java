@@ -38,23 +38,6 @@ public class AdminMapper {
 
     public void logIn(AdminLogInRequestDTO adminLogInRequestDTO) {
         logger.info("Received request in mapping for login");
-        AdminUsers adminUser = adminDAO.findUserByEmail(adminLogInRequestDTO.getEmail());
-        if (!passwordEncoder.matches(adminLogInRequestDTO.getPassword(), adminUser.getPassword())) {
-            throw new SYMException(
-                    HttpStatus.UNAUTHORIZED,
-                    SYMErrorType.GENERIC_EXCEPTION,
-                    ErrorCodeConstants.ERROR_CODE_PASSWORD_NOT_MATCHING,
-                    "Please enter correct password !",
-                    "Entered password is wrong, please enter correct password"
-            );
-        }
-        logger.info("Password verified successfully");
-        var otp = generateOTP();
-
-        adminUser.setOtp(otp);
-        adminUser.setOtpGeneratedTime(LocalDateTime.now());
-        var savedUser = adminDAO.save(adminUser);
-        sendVerificationEmail(savedUser.getEmail(), otp);
         logger.info("OTP sent successfully");
     }
 
@@ -78,86 +61,11 @@ public class AdminMapper {
         return String.valueOf(otpValue);
     }
 
-    private void sendVerificationEmail(String email, String otp) {
-        var subject = "Shyam Jewellers Admin Login - OTP Verification";
-
-        var body = "Dear Admin,\n\n" +
-                "We received a request to log in to your Shyam Jewellers Admin account.\n\n" +
-                "🔐 Your One-Time Password (OTP) is: " + otp + "\n\n" +
-                "This OTP is valid for 5 minutes. Please do not share this code with anyone.\n\n" +
-                "If you did not initiate this request, please contact support immediately.\n\n" +
-                "Regards,\n" +
-                "Shyam Jewellers Security Team";
-
-        emailService.sendEmail(email, subject, body);
-    }
-
     public AdminLogInResponseDTO mapToAdminLogInMessage(String message) {
         return AdminLogInResponseDTO.builder()
                 .message(message)
                 .build();
     }
-    public VerifyAdminResponseDTO verifyOTP(VerifyAdminRequestDTO verifyAdminRequestDTO) {
-        logger.debug("Calling the service to validate the OTP");
-
-        var user = adminDAO.findUserByEmail(verifyAdminRequestDTO.getEmail());
-
-        try {
-            // Check if OTP has expired
-            if (user.getOtpGeneratedTime() == null ||
-                    user.getOtpGeneratedTime().plusMinutes(5).isBefore(LocalDateTime.now())) {
-
-                throw new SYMException(
-                        HttpStatus.UNAUTHORIZED,
-                        SYMErrorType.GENERIC_EXCEPTION,
-                        ErrorCodeConstants.ERROR_CODE_AUTHZ_OTP_EXPIRED,
-                        "OTP expired",
-                        String.format("OTP expired for email: %s", verifyAdminRequestDTO.getEmail())
-                );
-            }
-
-            // Check if OTP is correct
-            if (verifyAdminRequestDTO.getOtp().equals(user.getOtp())) {
-                logger.info("Verified successfully");
-
-                var role = user.getRole().name();
-                var generateToken = JwtUtil.generateAccessToken(user.getEmail(), role);
-
-                return VerifyAdminResponseDTO.builder()
-                        .message("Welcome Admin! Let’s unlock elegance and excellence today.")
-                        .token(generateToken)
-                        .build();
-            } else {
-                throw new SYMException(
-                        HttpStatus.UNAUTHORIZED,
-                        SYMErrorType.GENERIC_EXCEPTION,
-                        ErrorCodeConstants.ERROR_CODE_AUTHZ_INVALID_OTP,
-                        "Invalid OTP",
-                        String.format("OTP entered: %s is incorrect for email: %s",
-                                verifyAdminRequestDTO.getOtp(), verifyAdminRequestDTO.getEmail())
-                );
-            }
-
-        } catch (SYMException e) {
-            logger.error("SYMException during OTP verification: {}", e.getMessage());
-            throw e;
-
-        } catch (Exception e) {
-            logger.error("Unexpected error during OTP verification", e);
-            throw new SYMException(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    SYMErrorType.GENERIC_EXCEPTION,
-                    ErrorCodeConstants.ERROR_CODE_AUTHZ_UNKNOWN,
-                    "Something went wrong",
-                    e.getMessage()
-            );
-        }
-    }
-
-    public void logout(String token) {
-
-    }
-
     public AdminLogoutResponseDTO mapToAdminLogoutInMessage(String message) {
         return AdminLogoutResponseDTO.builder()
                 .message(message)

@@ -12,6 +12,7 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Date;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -23,7 +24,7 @@ public class JwtUtil {
             JwtConstants.SECRET.getBytes(StandardCharsets.UTF_8)
     );
 
-    private static final long ACCESS_TOKEN_EXPIRATION_TIME = 10 * 60 * 1000;
+    private static final long ACCESS_TOKEN_EXPIRATION_TIME = 15 * 60 * 1000;
 
     public static String generateAccessToken(String username, String role) {
         return Jwts.builder()
@@ -33,6 +34,10 @@ public class JwtUtil {
                 .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION_TIME))
                 .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public static String generateRefreshToken() {
+        return UUID.randomUUID().toString();
     }
 
     public boolean validateToken(String token) {

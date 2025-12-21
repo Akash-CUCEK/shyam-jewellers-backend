@@ -34,11 +34,7 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-
-                        // Preflight
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
-
-                        // 🔓 PUBLIC APIs
                         .requestMatchers(
                                 "/api/v1/auth/**",
                                 "/auth/api/v1/admin/**",
@@ -46,8 +42,9 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/swagger-resources/**",
-                                "/webjars/**"
-                        ).permitAll()
+                                "/webjars/**",
+                                "/refreshToken"
+                ).permitAll()
 
                         // 🔒 PROTECTED
                         .anyRequest().authenticated()
@@ -65,7 +62,6 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // ✅ CORS
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
 

@@ -8,6 +8,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -28,15 +31,24 @@ public class AdminController {
         return new BaseResponseDTO<>(response,null);
     }
 
-    @Operation(summary = "Verify a admin user", description = "Verify a Admin User.")
     @PostMapping("/verifyOtp")
-    public BaseResponseDTO<VerifyAdminResponseDTO> verify(
+    public ResponseEntity<BaseResponseDTO<VerifyAdminResponseDTO>> verify(
             @RequestBody VerifyAdminRequestDTO verifyAdminRequestDTO
     ){
         logger.info("Received request for verify");
-        var response = adminService.verifyOtp(verifyAdminRequestDTO);
-        return new BaseResponseDTO<>(response,null);
+
+        ResponseEntity<VerifyAdminResponseDTO> responseEntity =
+                adminService.verifyOtp(verifyAdminRequestDTO);
+
+        return ResponseEntity
+                .status(responseEntity.getStatusCode())
+                .headers(responseEntity.getHeaders())
+                .body(new BaseResponseDTO<>(
+                        responseEntity.getBody(),
+                        null
+                ));
     }
+
 
     @Operation(summary = "Reset Password", description = "Reset Password")
     @PostMapping("/forgetPassword")
@@ -88,14 +100,30 @@ public class AdminController {
     }
 
     @Operation(summary = "Logout a admin user", description = "Logout a Admin User.")
-        @PostMapping("/logout")
-    public BaseResponseDTO<AdminLogoutResponseDTO> logout(
-            @RequestBody AdminLogoutRequestDTO adminLogoutRequestDTO
-    ){
+    @PostMapping("/logout")
+    public ResponseEntity<BaseResponseDTO<AdminLogoutResponseDTO>> logout(
+            @RequestHeader("Authorization") String authorization,
+            @CookieValue(value = "refreshToken", required = false) String refreshToken
+    ) {
         logger.info("Received request for logout");
-        var response = adminService.logout(adminLogoutRequestDTO);
-        return new BaseResponseDTO<>(response, null);
+        String accessToken = authorization.replace("Bearer ", "");
+
+        AdminLogoutResponseDTO response =
+                adminService.logout(accessToken, refreshToken);
+
+        ResponseCookie deleteCookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("Strict")
+                .path("/")
+                .maxAge(0)
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, deleteCookie.toString())
+                .body(new BaseResponseDTO<>(response, null));
     }
+
 
     @Operation(summary = "Edit admin user", description = "Edit Admin User.")
     @PostMapping("/editAdmin")

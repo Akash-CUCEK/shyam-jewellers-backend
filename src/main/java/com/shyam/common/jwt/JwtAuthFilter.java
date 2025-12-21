@@ -24,63 +24,65 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        final String authHeader = request.getHeader("Authorization");
-        String username = null;
-        String jwt = null;
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    ) throws ServletException, IOException {
 
-        log.info("➡️ Request URI: {}, Authorization Header: {}", request.getRequestURI(), authHeader);
+        String uri = request.getRequestURI();
+        if (uri.contains("/refreshToken")
+                || uri.contains("/login")
+                || uri.contains("/verify")
+                || uri.contains("/verifyOtp")) {
+
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        final String authHeader = request.getHeader("Authorization");
+        log.info("Request URI: {}, Authorization Header: {}", uri, authHeader);
 
         try {
-            if (authHeader != null && authHeader.startsWith("Bearer ")) {
-                jwt = authHeader.substring(7);
-                log.info("Extracted JWT: {}",jwt);
+            if (authHeader != null
+                    && authHeader.startsWith("Bearer ")
+                    && SecurityContextHolder.getContext().getAuthentication() == null) {
+
+                String jwt = authHeader.substring(7);
 
                 if (jwtUtil.validateToken(jwt)) {
-                    log.info("✅ JWT is valid");
 
-                    username = JwtUtil.getUsername(jwt);
+                    String username = JwtUtil.getUsername(jwt);
                     String role = JwtUtil.getRole(jwt);
 
-                    log.info("Username from JWT: {}, Role: {}", username, role);
-
-                    UserDetails userDetails;
-                    switch (role.toUpperCase()) {
-                        case "ADMIN", "SUPER_ADMIN" -> {
-                            userDetails = adminUserDetailsService.loadUserByUsername(username);
-                            log.info("🔐 Loaded ADMIN user details for {}", username);
-                        }
-                        case "USER" -> {
-                            userDetails = normalUserDetailsService.loadUserByUsername(username);
-                            log.info("🔐 Loaded NORMAL user details for {}", username);
-                        }
-                        default -> {
-                            log.error("Invalid role in JWT: {}", role);
-                            throw new RuntimeException("Invalid role in JWT: " + role);
-                        }
-                    }
+                    UserDetails userDetails =
+                            switch (role) {
+                                case "ADMIN", "SUPER_ADMIN" ->
+                                        adminUserDetailsService.loadUserByUsername(username);
+                                case "USER" ->
+                                        normalUserDetailsService.loadUserByUsername(username);
+                                default ->
+                                        throw new RuntimeException("Invalid role: " + role);
+                            };
 
                     UsernamePasswordAuthenticationToken authToken =
                             new UsernamePasswordAuthenticationToken(
-                                    userDetails, null, userDetails.getAuthorities()
+                                    userDetails,
+                                    null,
+                                    userDetails.getAuthorities()
                             );
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
-                    log.info("🔓 Authentication successful for {}", username);
 
-                } else {
-                    log.warn("⚠️ JWT is invalid or expired");
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
-            } else {
-                log.warn("⚠️ No Authorization header or invalid format");
             }
 
             filterChain.doFilter(request, response);
 
-        } catch (Exception e) {
-            log.error("🚨 JWT Filter exception", e);
+        } catch (Exception ex) {
+            log.error("🚨 JWT Filter error", ex);
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
-            response.getWriter().write("{\"error\": \"Unauthorized: Invalid or missing token\"}");
+            response.getWriter().write("{\"message\":\"Unauthorized\"}");
         }
     }
 }

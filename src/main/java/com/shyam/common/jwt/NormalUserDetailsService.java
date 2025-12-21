@@ -19,6 +19,7 @@ public class NormalUserDetailsService implements UserDetailsService {
 
         return User.builder()
                 .username(user.getEmail())
+                .password("OTP_AUTH_USER")
                 .authorities("USERS")
                 .build();
     }

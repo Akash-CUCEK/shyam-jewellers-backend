@@ -1,6 +1,9 @@
 package com.shyam.common.controller;
 
+import com.shyam.common.dto.RefreshTokenResponseDTO;
+import com.shyam.common.exception.dto.BaseResponseDTO;
 import com.shyam.common.jwt.JwtUtil;
+import com.shyam.common.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -8,18 +11,38 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-import java.util.Map;
-@Slf4j
+
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class RefreshTokenController {
-    private final JwtUtil jwtUtil;
 
+    private final RefreshTokenService refreshTokenService;
     @PostMapping("/refreshToken")
-    public ResponseEntity<?> refreshToken(@CookieValue("refreshToken") String refreshToken) {
-        log.info("Refresh token request received");
-        var newAccessToken = JwtUtil.generateAccessToken(jwtUtil.getUsername(refreshToken), jwtUtil.getRole(refreshToken));
-        log.info("Error while generating refresh token");
-        return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
+    public ResponseEntity<BaseResponseDTO<RefreshTokenResponseDTO>> refreshToken(
+            @CookieValue(value = "refreshToken", required = false) String refreshToken) {
+
+        if (refreshToken == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new BaseResponseDTO<>(null, null));
+        }
+
+        var details = refreshTokenService.validate(refreshToken);
+
+        if (details == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new BaseResponseDTO<>(null, null));
+        }
+
+        var newAccessToken =
+                JwtUtil.generateAccessToken(details.email(), details.role());
+
+        return ResponseEntity.ok(
+                new BaseResponseDTO<>(
+                        new RefreshTokenResponseDTO(newAccessToken),
+                        null
+                )
+        );
     }
+
 }

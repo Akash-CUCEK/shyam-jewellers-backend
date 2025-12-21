@@ -5,20 +5,26 @@ import com.shyam.common.exception.domain.SYMErrorType;
 import com.shyam.common.exception.domain.SYMException;
 import com.shyam.common.jwt.JwtUtil;
 import com.shyam.common.redis.service.TokenBlacklistService;
+import com.shyam.common.service.RefreshTokenService;
 import com.shyam.common.util.MessageSourceUtil;
 import com.shyam.constants.ErrorCodeConstants;
 import com.shyam.dao.AdminDAO;
 import com.shyam.dto.request.*;
 import com.shyam.dto.response.*;
+import com.shyam.entity.AdminUsers;
 import com.shyam.mapper.AdminMapper;
 import com.shyam.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Random;
@@ -36,13 +42,81 @@ public class AdminServiceImp implements AdminService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final TokenBlacklistService tokenBlacklistService;
     private final EmailService emailService;
+    private final RefreshTokenService refreshTokenService;
 
     @Override
     public AdminLogInResponseDTO logIn(AdminLogInRequestDTO adminLogInRequestDTO) {
-        adminMapper.logIn(adminLogInRequestDTO);
+        AdminUsers adminUser = adminDAO.findUserByEmail(adminLogInRequestDTO.getEmail());
+        if (!passwordEncoder.matches(adminLogInRequestDTO.getPassword(), adminUser.getPassword())) {
+            throw new SYMException(
+                    HttpStatus.UNAUTHORIZED,
+                    SYMErrorType.GENERIC_EXCEPTION,
+                    ErrorCodeConstants.ERROR_CODE_PASSWORD_NOT_MATCHING,
+                    "Please enter correct password !",
+                    "Entered password is wrong, please enter correct password"
+            );
+        }
+        logger.info("Password verified successfully");
+        var otp = generateOTP();
+        adminUser.setOtp(otp);
+        adminUser.setOtpGeneratedTime(LocalDateTime.now());
+        var savedUser = adminDAO.save(adminUser);
+        sendVerificationEmail(savedUser.getEmail(), otp);
         return adminMapper.mapToAdminLogInMessage(messageSourceUtil
                 .getMessage(MESSAGE_CODE_LOGIN_SEND_OTP));
     }
+
+    @Override
+    public ResponseEntity<VerifyAdminResponseDTO> verifyOtp(VerifyAdminRequestDTO request) {
+        logger.info("Processing OTP verification");
+        var admin = adminDAO.findUserByEmail(request.getEmail());
+        if (admin.getOtpGeneratedTime() == null ||
+                admin.getOtpGeneratedTime().plusMinutes(5).isBefore(LocalDateTime.now())) {
+
+            throw new SYMException(
+                    HttpStatus.UNAUTHORIZED,
+                    SYMErrorType.GENERIC_EXCEPTION,
+                    ErrorCodeConstants.ERROR_CODE_AUTHZ_OTP_EXPIRED,
+                    "OTP expired",
+                    "OTP expired for email: " + request.getEmail()
+            );
+        }
+
+        if (!Objects.equals(request.getOtp(), admin.getOtp())) {
+            throw new SYMException(
+                    HttpStatus.UNAUTHORIZED,
+                    SYMErrorType.GENERIC_EXCEPTION,
+                    ErrorCodeConstants.ERROR_CODE_AUTHZ_INVALID_OTP,
+                    "Invalid OTP",
+                    "Invalid OTP for email: " + request.getEmail()
+            );
+        }
+
+        var role = admin.getRole().name();
+
+        var accessToken = JwtUtil.generateAccessToken(admin.getEmail(), role);
+        var refreshToken = JwtUtil.generateRefreshToken();
+
+        refreshTokenService.store(admin.getEmail(), role, refreshToken);
+
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("Strict")
+                .path("/")
+                .maxAge(Duration.ofDays(1))
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(
+                        VerifyAdminResponseDTO.builder()
+                                .message("Welcome Admin!")
+                                .token(accessToken)
+                                .build()
+                );
+    }
+
     @Override
     public ForgetPasswordResponseDTO forgetPassword(ForgetPasswordRequestDTO forgetPasswordRequestDTO) {
         var admin = adminDAO.findUserByEmail(forgetPasswordRequestDTO.getEmail());
@@ -60,72 +134,54 @@ public class AdminServiceImp implements AdminService {
             VerifyAdminRequestDTO verifyAdminRequestDTO) {
 
         var admin = adminDAO.findUserByEmail(verifyAdminRequestDTO.getEmail());
-        try {
-            if (admin.getOtpGeneratedTime() == null ||
-                    admin.getOtpGeneratedTime()
-                            .plusMinutes(5)
-                            .isBefore(LocalDateTime.now())) {
-
-                throw new SYMException(
-                        HttpStatus.UNAUTHORIZED,
-                        SYMErrorType.GENERIC_EXCEPTION,
-                        ErrorCodeConstants.ERROR_CODE_AUTHZ_OTP_EXPIRED,
-                        "OTP expired",
-                        "OTP expired for email: " + verifyAdminRequestDTO.getEmail()
-                );
-            }
-
-            if (!Objects.equals(verifyAdminRequestDTO.getOtp(), admin.getOtp())) {
-                throw new SYMException(
-                        HttpStatus.UNAUTHORIZED,
-                        SYMErrorType.GENERIC_EXCEPTION,
-                        ErrorCodeConstants.ERROR_CODE_AUTHZ_INVALID_OTP,
-                        "Invalid OTP",
-                        "Invalid OTP for email: " + verifyAdminRequestDTO.getEmail()
-                );
-            }
-
-            admin.setPassword(passwordEncoder.encode(verifyAdminRequestDTO.getPassword()));
-            admin.setOtp(null);
-            admin.setOtpGeneratedTime(null);
-            adminDAO.save(admin);
-            logger.info("Password reset successful for email: {}",
-                    verifyAdminRequestDTO.getEmail());
-        } catch (SYMException e) {
-            logger.error("Password reset SYMException: {}", e.getMessage());
-            throw e;
-
-        } catch (Exception e) {
-            logger.error("Unexpected error during OTP verification", e);
+        if (admin.getOtpGeneratedTime() == null ||
+                admin.getOtpGeneratedTime()
+                        .plusMinutes(5)
+                        .isBefore(LocalDateTime.now())) {
             throw new SYMException(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    HttpStatus.UNAUTHORIZED,
                     SYMErrorType.GENERIC_EXCEPTION,
-                    ErrorCodeConstants.ERROR_CODE_AUTHZ_UNKNOWN,
-                    "Something went wrong",
-                    e.getMessage()
+                    ErrorCodeConstants.ERROR_CODE_AUTHZ_OTP_EXPIRED,
+                    "OTP expired",
+                    "OTP expired for email: " + verifyAdminRequestDTO.getEmail()
             );
         }
 
+        if (!Objects.equals(verifyAdminRequestDTO.getOtp(), admin.getOtp())) {
+            throw new SYMException(
+                    HttpStatus.UNAUTHORIZED,
+                    SYMErrorType.GENERIC_EXCEPTION,
+                    ErrorCodeConstants.ERROR_CODE_AUTHZ_INVALID_OTP,
+                    "Invalid OTP",
+                    "Invalid OTP for email: " + verifyAdminRequestDTO.getEmail()
+            );
+        }
+        admin.setPassword(passwordEncoder.encode(verifyAdminRequestDTO.getPassword()));
+        admin.setOtp(null);
+        admin.setOtpGeneratedTime(null);
+        adminDAO.save(admin);
         return adminMapper.mapToVerifyForgetOtpInMessage(
                 messageSourceUtil.getMessage(MESSAGE_CODE_FORGET_ADMIN_PASSWORD)
         );
     }
 
-
     @Override
-    public VerifyAdminResponseDTO verifyOtp(VerifyAdminRequestDTO verifyAdminRequestDTO) {
-        logger.info("Processing for verifying the otp ");
-        return adminMapper.verifyOTP(verifyAdminRequestDTO);
-    }
+    public AdminLogoutResponseDTO logout(String accessToken, String refreshToken) {
+        logger.info("Processing to logout the admin");
+        long expiryInSeconds =
+                (JwtUtil.getExpiry(accessToken).getTime() - System.currentTimeMillis()) / 1000;
+        if (expiryInSeconds > 0) {
+            logger.info("Blacklisting the token...");
+            tokenBlacklistService.blacklistToken(accessToken, expiryInSeconds);
+        }
+        if (refreshToken != null) {
+            logger.info("Deleting the refresh token...");
+            refreshTokenService.deleteByRefreshToken(refreshToken);
+        }
 
-    @Override
-    public AdminLogoutResponseDTO logout(AdminLogoutRequestDTO adminLogoutRequestDTO) {
-        logger.info("Processing for logout the admin user ");
-        var expiryInSeconds = (JwtUtil.getExpiry(adminLogoutRequestDTO.getToken()).getTime()
-                - System.currentTimeMillis()) / 1000;
-        tokenBlacklistService.blacklistToken(adminLogoutRequestDTO.getToken(),expiryInSeconds);
-        return adminMapper.mapToAdminLogoutInMessage(messageSourceUtil
-                .getMessage(MESSAGE_CODE_LOG_OUT));
+        return adminMapper.mapToAdminLogoutInMessage(
+                messageSourceUtil.getMessage(MESSAGE_CODE_LOG_OUT)
+        );
     }
 
     @Override
@@ -195,13 +251,19 @@ public class AdminServiceImp implements AdminService {
     private void sendVerificationEmail(String email, String otp) {
         var subject = "Shyam Jewellers Admin Login - OTP Verification";
 
-        var body = "Dear Admin,\n\n" +
-                "We received a request to log in to your Shyam Jewellers Admin account.\n\n" +
-                "🔐 Your One-Time Password (OTP) is: " + otp + "\n\n" +
-                "This OTP is valid for 5 minutes. Please do not share this code with anyone.\n\n" +
-                "If you did not initiate this request, please contact support immediately.\n\n" +
-                "Regards,\n" +
-                "Shyam Jewellers Security Team";
+        var body =
+                "Dear Admin,\n\n" +
+                        "We received a request to sign in to your Shyam Jewellers Admin Account.\n\n" +
+                        "━━━━━━━━━━━━━━━━━━━━\n" +
+                        "🔐 Your One-Time Password (OTP)\n" +
+                        otp + "\n" +
+                        "━━━━━━━━━━━━━━━━━━━━\n\n" +
+                        "⏱ This OTP is valid for 5 minutes.\n" +
+                        "⚠ Please do not share this code with anyone.\n\n" +
+                        "If you did not initiate this request, please contact support immediately.\n\n" +
+                        "Regards,\n" +
+                        "Shyam Jewellers\n" +
+                        "Security Team";
 
         emailService.sendEmail(email, subject, body);
     }

@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -82,19 +83,10 @@ public class AdminController {
     }
 
     @Operation(summary = "Get Offer Section", description = "Get offer photo.")
-    @PostMapping("/get OfferPhoto")
+    @PostMapping("/getOfferPhoto")
     public BaseResponseDTO<GetOfferPhotoResponseDTO> getoffer(
     ){
         logger.info("Received request to get offer photo");
-        var response = adminService.getOffer();
-        return new BaseResponseDTO<>(response,null);
-    }
-
-    @Operation(summary = "Get offer Section", description = "Getting offer photo.")
-    @PostMapping("/getOfferPhoto")
-    public BaseResponseDTO<GetOfferPhotoResponseDTO> offerUpdate(
-    ){
-        logger.info("Received request for get offer photo");
         var response = adminService.getOfferPhoto();
         return new BaseResponseDTO<>(response,null);
     }
@@ -127,6 +119,7 @@ public class AdminController {
 
     @Operation(summary = "Edit admin user", description = "Edit Admin User.")
     @PostMapping("/editAdmin")
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     public BaseResponseDTO<EditAdminResponseDTO> edit(
             @RequestBody EditAdminRequestDTO editAdminRequestDTO
     ){

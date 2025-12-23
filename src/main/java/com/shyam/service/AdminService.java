@@ -25,8 +25,6 @@ public interface AdminService {
 
     GetAdminResponseDTO getAdmin(GetAdminRequestDTO getAdminRequestDTO);
 
-    GetOfferPhotoResponseDTO getOffer();
-
     ForgetPasswordResponseDTO forgetPassword(ForgetPasswordRequestDTO forgetPasswordRequestDTO);
 
     VerifyForgetPasswordResponseDTO forgetVerifyOtp(VerifyAdminRequestDTO verifyAdminRequestDTO);

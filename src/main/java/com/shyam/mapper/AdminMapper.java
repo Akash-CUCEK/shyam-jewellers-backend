@@ -88,31 +88,7 @@ public class AdminMapper {
     }
 
     public void changePassword(ChangePasswordRequestDTO changePasswordRequestDTO) {
-        logger.info("Processing change password in mapper");
 
-        var adminUser = adminDAO.findUserByEmail(changePasswordRequestDTO.getEmail());
-        if (!passwordEncoder.matches(changePasswordRequestDTO.getPassword(), adminUser.getPassword())) {
-            throw new SYMException(
-                    HttpStatus.UNAUTHORIZED,
-                    SYMErrorType.GENERIC_EXCEPTION,
-                    ErrorCodeConstants.ERROR_CODE_PASSWORD_NOT_MATCHING,
-                    "Please enter correct password !",
-                    "Entered password is wrong, please enter correct password"
-            );
-        }
-
-        if (passwordEncoder.matches(changePasswordRequestDTO.getNewPassword(), adminUser.getPassword())) {
-            throw new SYMException(
-                    HttpStatus.BAD_REQUEST,
-                    SYMErrorType.GENERIC_EXCEPTION,
-                    ErrorCodeConstants.ERROR_CODE_SAME_AS_OLD_PASSWORD,
-                    "New password cannot be same as the old password!",
-                    "Same password used while attempting to change password"
-            );
-        }
-
-        adminUser.setPassword(passwordEncoder.encode(changePasswordRequestDTO.getNewPassword()));
-        adminDAO.save(adminUser);
     }
 
     public ChangePasswordResponseDTO mapToAdminChangePasswordInMessage(String message) {
@@ -185,27 +161,6 @@ public class AdminMapper {
                 .build();
     }
 
-    public GetOfferPhotoResponseDTO getOfferPhoto() {
-        var offer = adminDAO.getLatestOfferPhoto();
-        if (offer == null) {
-            logger.info("No offer photo found in DB.");
-            return GetOfferPhotoResponseDTO.builder()
-                    .imgUrl1(null)
-                    .imgUrl2(null)
-                    .imgUrl3(null)
-                    .imgUrl4(null)
-                    .imgUrl5(null)
-                    .build();
-        }
-        return GetOfferPhotoResponseDTO.builder()
-                .imgUrl1(offer.getImgUrl1())
-                .imgUrl2(offer.getImgUrl2())
-                .imgUrl3(offer.getImgUrl3())
-                .imgUrl4(offer.getImgUrl4())
-                .imgUrl5(offer.getImgUrl5())
-                .build();
-    }
-
     public GetAdminListResponseDTO getAllAdmin() {
         List<AdminUsers> admins = adminDAO.findByRole(Role.ADMIN);
         List<GetAllAdminResponseDTO> responseDTOList = admins.stream()
@@ -245,18 +200,6 @@ public class AdminMapper {
                 .name(admin.getName())
                 .phoneNumber(admin.getPhoneNumber())
                 .imageUrl(admin.getImageUrl())
-                .build();
-    }
-
-    public GetOfferPhotoResponseDTO getOffer() {
-        logger.debug("Mapping for getting offer photo");
-        var photos = adminDAO.getLatestOfferPhoto();
-        return GetOfferPhotoResponseDTO.builder()
-                .imgUrl1(photos.getImgUrl1())
-                .imgUrl2(photos.getImgUrl2())
-                .imgUrl3(photos.getImgUrl3())
-                .imgUrl4(photos.getImgUrl4())
-                .imgUrl5(photos.getImgUrl5())
                 .build();
     }
 }

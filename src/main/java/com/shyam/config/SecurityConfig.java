@@ -5,6 +5,7 @@ import com.shyam.common.jwt.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -35,9 +36,20 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // ✅ ADMIN PUBLIC AUTH APIs
                         .requestMatchers(
-                                "/api/v1/auth/**",
-                                "/auth/api/v1/admin/**",
+                                "/auth/api/v1/admin/logIn",
+                                "/auth/api/v1/admin/verifyOtp",
+                                "/auth/api/v1/admin/forgetPassword",
+                                "/auth/api/v1/admin/verifyPasswordOtp"
+                        ).permitAll()
+
+                        // ✅ USER AUTH (if any)
+                        .requestMatchers("/api/v1/auth/**").permitAll()
+
+                        .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
@@ -46,7 +58,7 @@ public class SecurityConfig {
                                 "/refreshToken"
                 ).permitAll()
 
-                        // 🔒 PROTECTED
+                        // 🔒 EVERYTHING ELSE NEEDS TOKEN
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex ->
@@ -66,16 +78,21 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
 
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(
+
+        configuration.setAllowedOriginPatterns(List.of(
                 "http://localhost:5173",
-                "https://calm-flower-04b72f600.3.azurestaticapps.net"
+                "https://*.azurestaticapps.net"
         ));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+        configuration.setAllowedMethods(List.of(
+                "GET", "POST", "PUT", "DELETE", "OPTIONS"
+        ));
+
         configuration.setAllowedHeaders(List.of("*"));
-        configuration.setExposedHeaders(List.of(""));
         configuration.setAllowCredentials(true);
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        UrlBasedCorsConfigurationSource source =
+                new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
 
         return source;

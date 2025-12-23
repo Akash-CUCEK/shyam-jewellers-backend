@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,7 +21,7 @@ public class ProductController {
     private final ProductService productService;
 
     @Operation(summary = "Add new product", description = "Admin adds a new product")
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     @PostMapping("/addProduct")
     public BaseResponseDTO<ProductAddResponseDTO> addProduct(
             @Valid @RequestBody ProductAddRequestDTO addRequestDTO
@@ -31,7 +32,7 @@ public class ProductController {
     }
 
     @Operation(summary = "Update product", description = "Admin updates a product")
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     @PutMapping("/updateProduct")
     public BaseResponseDTO<UpdateResponseDTO> updateProduct(
             @Valid @RequestBody UpdateRequestDTO updateRequestDTO
@@ -42,7 +43,7 @@ public class ProductController {
     }
 
     @Operation(summary = "Delete product", description = "Admin deletes a product")
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     @DeleteMapping("/deleteProduct")
     public BaseResponseDTO<DeleteResponseDTO> deleteProduct(
             @Valid @RequestBody DeleteProductRequestDTO deleteProductRequestDTO

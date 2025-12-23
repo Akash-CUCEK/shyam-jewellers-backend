@@ -193,7 +193,29 @@ public class AdminServiceImp implements AdminService {
 
     @Override
     public ChangePasswordResponseDTO changePassword(ChangePasswordRequestDTO changePasswordRequestDTO) {
-        adminMapper.changePassword(changePasswordRequestDTO);
+        logger.info("Processing to change password");
+        var adminUser = adminDAO.findUserByEmail(changePasswordRequestDTO.getEmail());
+        if (!passwordEncoder.matches(changePasswordRequestDTO.getPassword(), adminUser.getPassword())) {
+            logger.info("Incorrect password.");
+            throw new SYMException(
+                    HttpStatus.UNAUTHORIZED,
+                    SYMErrorType.GENERIC_EXCEPTION,
+                    ErrorCodeConstants.ERROR_CODE_PASSWORD_NOT_MATCHING,
+                    "Please enter correct password !",
+                    "Entered password is wrong, please enter correct password"
+            );
+        }
+        if (passwordEncoder.matches(changePasswordRequestDTO.getNewPassword(), adminUser.getPassword())) {
+            throw new SYMException(
+                    HttpStatus.BAD_REQUEST,
+                    SYMErrorType.GENERIC_EXCEPTION,
+                    ErrorCodeConstants.ERROR_CODE_SAME_AS_OLD_PASSWORD,
+                    "New password cannot be same as the old password!",
+                    "Same password used while attempting to change password"
+            );
+        }
+        adminUser.setPassword(passwordEncoder.encode(changePasswordRequestDTO.getNewPassword()));
+        adminDAO.save(adminUser);
         return adminMapper.mapToAdminChangePasswordInMessage(messageSourceUtil
                 .getMessage(MESSAGE_CODE_CHANGE_PASSWORD_ADMIN));
     }
@@ -215,7 +237,25 @@ public class AdminServiceImp implements AdminService {
 
     @Override
     public GetOfferPhotoResponseDTO getOfferPhoto() {
-        return adminMapper.getOfferPhoto();
+        logger.info("Getting offer photos");
+        var offer = adminDAO.getLatestOfferPhoto();
+        if (offer == null) {
+            logger.info("No offer photo found in DB.");
+            return GetOfferPhotoResponseDTO.builder()
+                    .imgUrl1(null)
+                    .imgUrl2(null)
+                    .imgUrl3(null)
+                    .imgUrl4(null)
+                    .imgUrl5(null)
+                    .build();
+        }
+        return GetOfferPhotoResponseDTO.builder()
+                .imgUrl1(offer.getImgUrl1())
+                .imgUrl2(offer.getImgUrl2())
+                .imgUrl3(offer.getImgUrl3())
+                .imgUrl4(offer.getImgUrl4())
+                .imgUrl5(offer.getImgUrl5())
+                .build();
     }
 
     @Override
@@ -234,12 +274,6 @@ public class AdminServiceImp implements AdminService {
     public GetAdminResponseDTO getAdmin(GetAdminRequestDTO getAdminRequestDTO) {
         logger.info("Processing for getting admin ");
         return adminMapper.getAdmin(getAdminRequestDTO.getEmail());
-    }
-
-    @Override
-    public GetOfferPhotoResponseDTO getOffer() {
-        logger.info("Processing for getting offer photo ");
-        return adminMapper.getOffer();
     }
 
     private String generateOTP() {

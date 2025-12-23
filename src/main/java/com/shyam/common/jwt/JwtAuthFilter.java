@@ -31,17 +31,23 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         String uri = request.getRequestURI();
+
+        // ✅ Public endpoints (NO JWT required)
         if (uri.contains("/refreshToken")
-                || uri.contains("/login")
-                || uri.contains("/verify")
-                || uri.contains("/verifyOtp")) {
+                || uri.contains("/api/v1/auth/login")
+                || uri.contains("/api/v1/auth/verify")
+                || uri.contains("/verifyOtp")
+                || uri.contains("/auth/api/v1/admin/logIn")
+                || uri.contains("/auth/api/v1/admin/verifyOtp")
+                || uri.contains("/auth/api/v1/admin/forgetPassword")
+                || uri.contains("/auth/api/v1/admin/verifyPasswordOtp")) {
 
             filterChain.doFilter(request, response);
             return;
         }
 
         final String authHeader = request.getHeader("Authorization");
-        log.info("Request URI: {}, Authorization Header: {}", uri, authHeader);
+        log.info("➡️ Request URI: {}, Authorization Header: {}", uri, authHeader);
 
         try {
             if (authHeader != null
@@ -55,14 +61,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     String username = JwtUtil.getUsername(jwt);
                     String role = JwtUtil.getRole(jwt);
 
+                    log.info("✅ JWT valid | User: {} | Role: {}", username, role);
+
                     UserDetails userDetails =
-                            switch (role) {
+                            switch (role.toUpperCase()) {
                                 case "ADMIN", "SUPER_ADMIN" ->
                                         adminUserDetailsService.loadUserByUsername(username);
                                 case "USER" ->
                                         normalUserDetailsService.loadUserByUsername(username);
                                 default ->
-                                        throw new RuntimeException("Invalid role: " + role);
+                                        throw new RuntimeException("Invalid role in JWT: " + role);
                             };
 
                     UsernamePasswordAuthenticationToken authToken =
@@ -73,6 +81,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                             );
 
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+                    log.info("🔓 Authentication set for {}", username);
+                } else {
+                    log.warn("⚠️ Invalid or expired JWT");
                 }
             }
 

@@ -1,5 +1,6 @@
 package com.shyam.common.exception.domain;
 
+import com.shyam.common.exception.dto.BaseResponseDTO;
 import com.shyam.common.exception.dto.ErrorMessagesDTO;
 import com.shyam.common.exception.dto.ErrorResponseDTO;
 import org.springframework.http.HttpStatus;
@@ -12,22 +13,29 @@ import java.util.Collections;
 
 @ControllerAdvice
 public class GlobalException {
+
     @ExceptionHandler(SYMException.class)
-    public ResponseEntity<ErrorResponseDTO> handleSRYException(SYMException sym){
+    public ResponseEntity<BaseResponseDTO<Void>> handleSRYException(SYMException sym) {
+
         var errorMessagesDTO = new ErrorMessagesDTO(sym.getMessage());
 
         var errorResponseDTO = new ErrorResponseDTO(
-                Collections.singletonList(errorMessagesDTO),  // List of messages
-                LocalDateTime.now(),                          // Current timestamp
-                sym.getErrorType()                             // Error type
+                Collections.singletonList(errorMessagesDTO),
+                LocalDateTime.now(),
+                sym.getErrorType()
         );
 
-        return new ResponseEntity<>(errorResponseDTO, sym.getStatus());
+        BaseResponseDTO<Void> baseResponse =
+                new BaseResponseDTO<>(null, errorResponseDTO);
+
+        return new ResponseEntity<>(baseResponse, sym.getStatus());
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponseDTO> handleGenericException(Exception ex) {
-        ErrorMessagesDTO errorMessagesDTO = new ErrorMessagesDTO("Something went wrong. Please try again later.");
+    public ResponseEntity<BaseResponseDTO<Void>> handleGenericException(Exception ex) {
+
+        ErrorMessagesDTO errorMessagesDTO =
+                new ErrorMessagesDTO("Something went wrong. Please try again later.");
 
         ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(
                 Collections.singletonList(errorMessagesDTO),
@@ -35,6 +43,9 @@ public class GlobalException {
                 SYMErrorType.GENERIC_EXCEPTION
         );
 
-        return new ResponseEntity<>(errorResponseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+        BaseResponseDTO<Void> baseResponse =
+                new BaseResponseDTO<>(null, errorResponseDTO);
+
+        return new ResponseEntity<>(baseResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

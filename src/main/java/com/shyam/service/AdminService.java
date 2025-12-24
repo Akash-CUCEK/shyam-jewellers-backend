@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 public interface AdminService {
     AdminLogInResponseDTO logIn(AdminLogInRequestDTO adminLogInRequestDTO );
 
-    ResponseEntity<VerifyAdminResponseDTO> verifyOtp(VerifyAdminRequestDTO verifyAdminRequestDTO );
+    ResponseEntity<VerifyAdminResponseDTO> verifyOtp(VerifyAdminOtpRequestDTO verifyAdminOtpRequestDTO );
 
     EditAdminResponseDTO edit(EditAdminRequestDTO editAdminRequestDTO );
 

@@ -9,7 +9,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BaseResponseDTO<T extends Serializable> implements Serializable {
+public class BaseResponseDTO<T>{
     private T response;
     private ErrorResponseDTO errors;
 }

@@ -27,16 +27,16 @@ public class AdminController {
     public BaseResponseDTO<AdminLogInResponseDTO> logIn(
             @RequestBody AdminLogInRequestDTO adminLogInRequestDTO
     ){
-        logger.info("Received request for ");
+        logger.info("Received request for login admin");
         var response = adminService.logIn(adminLogInRequestDTO);
         return new BaseResponseDTO<>(response,null);
     }
 
     @PostMapping("/verifyOtp")
     public ResponseEntity<BaseResponseDTO<VerifyAdminResponseDTO>> verify(
-            @RequestBody VerifyAdminRequestDTO verifyAdminRequestDTO
+            @RequestBody VerifyAdminOtpRequestDTO verifyAdminRequestDTO
     ){
-        logger.info("Received request for verify");
+        logger.info("Received request for verify otp");
 
         ResponseEntity<VerifyAdminResponseDTO> responseEntity =
                 adminService.verifyOtp(verifyAdminRequestDTO);
@@ -66,7 +66,7 @@ public class AdminController {
     public BaseResponseDTO<VerifyForgetPasswordResponseDTO> forgetVerifyPassword(
             @RequestBody VerifyAdminRequestDTO verifyAdminRequestDTO
     ){
-        logger.info("Received request for verify otp for password reset :{}",verifyAdminRequestDTO);
+        logger.info("Received request for verify otp for password reset");
         var response = adminService.forgetVerifyOtp(verifyAdminRequestDTO);
         return new BaseResponseDTO<>(response,null);
     }
@@ -117,15 +117,14 @@ public class AdminController {
     }
 
 
-    @Operation(summary = "Edit admin user", description = "Edit Admin User.")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     @PostMapping("/editAdmin")
-    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     public BaseResponseDTO<EditAdminResponseDTO> edit(
             @RequestBody EditAdminRequestDTO editAdminRequestDTO
-    ){
+    ) {
         logger.info("Received request for edit");
         var response = adminService.edit(editAdminRequestDTO);
-        return new BaseResponseDTO<>(response,null);
+        return new BaseResponseDTO<>(response, null);
     }
 
     @Operation(summary = "Change password", description = "Admin change password.")

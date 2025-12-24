@@ -83,11 +83,12 @@ public class UserServiceImp implements UserService {
 
         ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
-                .secure(true)
-                .sameSite("Strict")
+                .secure(true)          // HTTPS (Azure ✔)
+                .sameSite("None")     // 🔥 CROSS-DOMAIN COOKIE ALLOW
                 .path("/")
                 .maxAge(Duration.ofDays(1))
                 .build();
+
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())

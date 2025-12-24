@@ -67,7 +67,7 @@ public class AdminServiceImp implements AdminService {
     }
 
     @Override
-    public ResponseEntity<VerifyAdminResponseDTO> verifyOtp(VerifyAdminRequestDTO request) {
+    public ResponseEntity<VerifyAdminResponseDTO> verifyOtp(VerifyAdminOtpRequestDTO request) {
         logger.info("Processing OTP verification");
         var admin = adminDAO.findUserByEmail(request.getEmail());
         if (admin.getOtpGeneratedTime() == null ||
@@ -91,7 +91,9 @@ public class AdminServiceImp implements AdminService {
                     "Invalid OTP for email: " + request.getEmail()
             );
         }
-
+        admin.setOtp(null);
+        admin.setOtpGeneratedTime(null);
+        adminDAO.save(admin);
         var role = admin.getRole().name();
 
         var accessToken = JwtUtil.generateAccessToken(admin.getEmail(), role);
@@ -132,7 +134,7 @@ public class AdminServiceImp implements AdminService {
     @Override
     public VerifyForgetPasswordResponseDTO forgetVerifyOtp(
             VerifyAdminRequestDTO verifyAdminRequestDTO) {
-
+        logger.info("Processing the verify otp for password reset");
         var admin = adminDAO.findUserByEmail(verifyAdminRequestDTO.getEmail());
         if (admin.getOtpGeneratedTime() == null ||
                 admin.getOtpGeneratedTime()
@@ -146,7 +148,6 @@ public class AdminServiceImp implements AdminService {
                     "OTP expired for email: " + verifyAdminRequestDTO.getEmail()
             );
         }
-
         if (!Objects.equals(verifyAdminRequestDTO.getOtp(), admin.getOtp())) {
             throw new SYMException(
                     HttpStatus.UNAUTHORIZED,
@@ -156,7 +157,18 @@ public class AdminServiceImp implements AdminService {
                     "Invalid OTP for email: " + verifyAdminRequestDTO.getEmail()
             );
         }
-        admin.setPassword(passwordEncoder.encode(verifyAdminRequestDTO.getPassword()));
+        var password = passwordEncoder.encode(verifyAdminRequestDTO.getPassword());
+        if (passwordEncoder.matches(admin.getPassword(), password)) {
+            logger.info("New password cannot be same as the old password! {} , {}",verifyAdminRequestDTO.getPassword(),password);
+            throw new SYMException(
+                    HttpStatus.BAD_REQUEST,
+                    SYMErrorType.GENERIC_EXCEPTION,
+                    ErrorCodeConstants.ERROR_CODE_SAME_AS_OLD_PASSWORD,
+                    "New password cannot be same as the old password!",
+                    "Same password used while attempting to forgot password"
+            );
+        }
+        admin.setPassword(password);
         admin.setOtp(null);
         admin.setOtpGeneratedTime(null);
         adminDAO.save(admin);

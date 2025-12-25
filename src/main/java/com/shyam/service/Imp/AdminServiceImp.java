@@ -106,6 +106,7 @@ public class AdminServiceImp implements AdminService {
                 .secure(true)
                 .sameSite("None")
                 .path("/")
+                .domain("shyam-jewellers-api-e8bhardbh4apapa4.centralindia-01.azurewebsites.net")
                 .maxAge(Duration.ofDays(1))
                 .build();
 

@@ -38,7 +38,6 @@ public class SecurityConfig {
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                        // ✅ ADMIN PUBLIC AUTH APIs
                         .requestMatchers(
                                 "/auth/api/v1/admin/logIn",
                                 "/auth/api/v1/admin/verifyOtp",
@@ -46,7 +45,6 @@ public class SecurityConfig {
                                 "/auth/api/v1/admin/verifyPasswordOtp"
                         ).permitAll()
 
-                        // ✅ USER AUTH (if any)
                         .requestMatchers("/api/v1/auth/**").permitAll()
 
                         .requestMatchers(

@@ -21,8 +21,10 @@ public class RefreshTokenController {
     @PostMapping("/refreshToken")
     public ResponseEntity<BaseResponseDTO<RefreshTokenResponseDTO>> refreshToken(
             @CookieValue(value = "refreshToken", required = false) String refreshToken) {
+        log.info("Received request for renew toke through refresh token api");
 
         if (refreshToken == null) {
+            log.info("Empty refresh token ");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new BaseResponseDTO<>(null, null));
         }

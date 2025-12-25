@@ -103,8 +103,8 @@ public class AdminServiceImp implements AdminService {
 
         ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
-                .secure(true)          // HTTPS (Azure ✔)
-                .sameSite("None")     // 🔥 CROSS-DOMAIN COOKIE ALLOW
+                .secure(true)
+                .sameSite("None")
                 .path("/")
                 .maxAge(Duration.ofDays(1))
                 .build();

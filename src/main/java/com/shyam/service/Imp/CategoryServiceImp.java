@@ -93,6 +93,7 @@ public class CategoryServiceImp implements CategoryService {
 
     @Override
     public ResponseEntity<?> uploadExcel(MultipartFile file, String createdBy) {
+        log.info("Processing the request for upload excel sheet");
         try {
             try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
 

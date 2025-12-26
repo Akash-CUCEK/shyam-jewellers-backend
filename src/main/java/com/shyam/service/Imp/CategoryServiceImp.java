@@ -53,7 +53,6 @@ public class CategoryServiceImp implements CategoryService {
     @Override
     public AddCategoryResponseDTO addCategories(AddCategoryRequestDTO addCategoryRequestDTO ) {
         log.info("Processing the request for adding category");
-
         if (!categoryDAO.isNameAvailable(addCategoryRequestDTO.getName())) {
             throw new SYMException(HttpStatus.BAD_REQUEST,
                     SYMErrorType.VALIDATION_FAILED,

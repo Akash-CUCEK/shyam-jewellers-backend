@@ -11,14 +11,5 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetAllOrderResponseDTO {
-    private Long id;
-    private String customerName;
-    private String customerEmail;
-    private String customerPhone;
-    private String address;
-    private List<String> products; // You can use List<ProductDTO> if needed
-    private LocalDateTime orderDateTime;
-    private String orderStatus;
-    private Double totalCost;
-    private Double dueAmount;
+    private List<GetOrderByIdResponseDTO> getOrderByDateResponseDTOList;
 }

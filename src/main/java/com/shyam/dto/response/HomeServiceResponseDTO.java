@@ -16,6 +16,8 @@ public class HomeServiceResponseDTO implements Serializable {
     private Long serviceId;
     private String name;
     private String phoneNumber;
+    private String address;
+    private String notes;
     private ServiceType serviceType;
     private LocalDateTime createdAt;
     private Status status;

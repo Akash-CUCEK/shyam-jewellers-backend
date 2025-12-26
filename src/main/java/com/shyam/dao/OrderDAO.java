@@ -3,7 +3,7 @@ package com.shyam.dao;
 import com.shyam.common.exception.domain.SYMErrorType;
 import com.shyam.common.exception.domain.SYMException;
 import com.shyam.constants.ErrorCodeConstants;
-import com.shyam.dto.request.GetOrderByDateRequestDTO;
+import com.shyam.dto.request.GetAllOrderRequestDTO;
 import com.shyam.entity.Order;
 import com.shyam.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
@@ -67,7 +67,7 @@ public class OrderDAO {
         }
     }
 
-    public List<Order> findOrderByOrderDate(GetOrderByDateRequestDTO dto) {
+    public List<Order> findOrderByOrderDate(GetAllOrderRequestDTO dto) {
         try {
             return orderRepository.findAllByOrderDate(dto.getOrderDate());
         } catch (Exception e) {

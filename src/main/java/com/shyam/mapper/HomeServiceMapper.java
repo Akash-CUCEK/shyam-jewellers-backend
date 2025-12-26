@@ -1,5 +1,6 @@
 package com.shyam.mapper;
 
+import com.shyam.common.constants.ServiceType;
 import com.shyam.common.constants.Status;
 import com.shyam.dto.request.CreateHomeServiceRequestDTO;
 import com.shyam.dto.request.EditHomeServiceRequestDTO;
@@ -22,6 +23,8 @@ public class HomeServiceMapper {
                 .map(service -> HomeServiceResponseDTO.builder()
                         .serviceId(service.getServiceId())
                         .name(service.getName())
+                        .address(service.getAddress())
+                        .notes(service.getNotes())
                         .phoneNumber(service.getPhoneNumber())
                         .serviceType(service.getServiceType())
                         .createdAt(service.getCreatedAt())
@@ -44,15 +47,17 @@ public class HomeServiceMapper {
                 .build();
     }
 
-    public static ServiceHome createHomeServiceRequests(CreateHomeServiceRequestDTO createHomeServiceRequestDTO) {
+    public static ServiceHome createHomeServiceRequests(CreateHomeServiceRequestDTO dto) {
         ServiceHome service = new ServiceHome();
-        service.setName(createHomeServiceRequestDTO.getName());
-        service.setAddress(createHomeServiceRequestDTO.getAddress());
+        service.setName(dto.getName());
+        service.setAddress(dto.getAddress());
+        service.setPhoneNumber(dto.getPhoneNumber());
+        service.setServiceType(ServiceType.valueOf(dto.getServiceType()));
         service.setStatus(Status.REQUESTED);
-        service.setPhoneNumber(createHomeServiceRequestDTO.getPhoneNumber());
-        service.setNotes(createHomeServiceRequestDTO.getNotes());
-        service.setCreatedBy(createHomeServiceRequestDTO.getEmail());
+        service.setNotes(dto.getNotes());
+        service.setCreatedBy(dto.getEmail());
         service.setCreatedAt(LocalDateTime.now());
+
         return service;
     }
 

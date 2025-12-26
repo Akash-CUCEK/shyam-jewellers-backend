@@ -1,9 +1,9 @@
 package com.shyam.service;
 
 import com.shyam.dto.request.AddOrderRequestDTO;
-import com.shyam.dto.request.GetOrderByDateRequestDTO;
 import com.shyam.dto.request.GetOrderByIdRequestDTO;
 import com.shyam.dto.request.GetOrderInvoiceRequest;
+import com.shyam.dto.request.UpdateOrderRequestDTO;
 import com.shyam.dto.response.*;
 
 public interface OrderService {
@@ -12,9 +12,11 @@ public interface OrderService {
     GetOrderByIdResponseDTO getOrderById(GetOrderByIdRequestDTO getOrderByIdRequestDTO);
 
 
-    GetOrderByDateResponseDTO getOrderByDate(GetOrderByDateRequestDTO getOrderBydateRequestDTO );
+    GetAllOrderResponseDTO getAllOrders();
 
     GetTotalOrderMonthResponse getTotalOrderMonth();
 
     GetOrderInvoiceResponse getOrderInvoice(GetOrderInvoiceRequest getOrderInvoiceRequest);
+
+    AddOrderResponseDTO updateOrder(UpdateOrderRequestDTO updateOrderRequestDTO);
 }

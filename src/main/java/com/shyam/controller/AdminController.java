@@ -73,6 +73,7 @@ public class AdminController {
 
 
     @Operation(summary = "Offer Section", description = "Adding offer photo.")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @PostMapping("/addOfferPhoto")
     public BaseResponseDTO<EditPhotoResponseDTO> offerUpdate(
             @RequestBody EditPhotoRequestDTO editPhotoRequestDTO
@@ -129,6 +130,7 @@ public class AdminController {
 
     @Operation(summary = "Change password", description = "Admin change password.")
     @PostMapping("/changePassword")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
     public BaseResponseDTO<ChangePasswordResponseDTO> changePassword(
             @RequestBody ChangePasswordRequestDTO changePasswordRequestDTO
     ){
@@ -139,6 +141,7 @@ public class AdminController {
 
     @Operation(summary = "Register new Admin", description = "new admin register.")
     @PostMapping("/registerAdmin")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
     public BaseResponseDTO<RegisterResponseDTO> registerAdmin(
             @RequestBody RegisterRequestDTO registerRequestDTO,
             @RequestHeader("Authorization") String authHeader
@@ -150,6 +153,7 @@ public class AdminController {
 
     @Operation(summary = "Get Admin", description = "Get Admin.")
     @PostMapping("/getAdminByEmail")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public BaseResponseDTO<GetAdminResponseDTO> getAllAdmin(
             @RequestBody GetAdminRequestDTO getAdminRequestDTO
     ){
@@ -160,6 +164,7 @@ public class AdminController {
 
     @Operation(summary = "Get All Admin", description = "Get All Admin.")
     @PostMapping("/getAllAdmin")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public BaseResponseDTO<GetAdminListResponseDTO> getAllAdmin(
 
     ){
@@ -170,6 +175,7 @@ public class AdminController {
 
     @Operation(summary = "delete Admin", description = "Delete Admin.")
     @PostMapping("/deleteAdmin")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public BaseResponseDTO<DeleteAdminResponseDTO> deleteAdmin(
             @RequestBody DeleteAdminRequestDTO deleteAdmin
     ){

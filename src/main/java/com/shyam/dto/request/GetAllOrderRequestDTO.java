@@ -10,6 +10,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class GetOrderByDateRequestDTO {
+public class GetAllOrderRequestDTO {
     private LocalDate orderDate;
 }

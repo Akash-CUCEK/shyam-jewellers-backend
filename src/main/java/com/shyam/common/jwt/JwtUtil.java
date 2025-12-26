@@ -24,7 +24,7 @@ public class JwtUtil {
             JwtConstants.SECRET.getBytes(StandardCharsets.UTF_8)
     );
 
-    private static final long ACCESS_TOKEN_EXPIRATION_TIME = 15 * 60 * 1000;
+    private static final long ACCESS_TOKEN_EXPIRATION_TIME = 30 * 60 * 1000;
 
     public static String generateAccessToken(String username, String role) {
         return Jwts.builder()

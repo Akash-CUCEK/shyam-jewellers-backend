@@ -77,9 +77,9 @@ public class SecurityConfig {
 
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of(
-                "http://localhost:5173",
-                "https://calm-flower-04b72f600.3.azurestaticapps.net"
+        configuration.setAllowedOriginPatterns(List.of(
+                "http://localhost:*",
+                "https://*.azurestaticapps.net"
         ));
 
         configuration.setAllowedMethods(List.of(

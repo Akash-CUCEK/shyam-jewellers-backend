@@ -30,13 +30,13 @@ public class RefreshTokenController {
         log.info("Received refresh token request");
 
         if (refreshToken == null) {
+            log.info("Empty refresh token");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new BaseResponseDTO<>(null, null));
         }
 
         var details = refreshTokenService.validate(refreshToken);
         if (details == null) {
-            log.info("Empty refresh token");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new BaseResponseDTO<>(null, null));
         }

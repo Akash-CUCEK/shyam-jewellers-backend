@@ -5,6 +5,9 @@ import com.shyam.dto.response.*;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import java.math.BigDecimal;
 
 public interface ProductService {
 
@@ -20,8 +23,8 @@ public interface ProductService {
             @Valid DeleteProductRequestDTO deleteProductRequestDTO
     );
 
-    GetProductResponseDTO getPriceProduct(
-            @Valid PriceRequestDTO priceRequestDTO
+    PageResponseDTO<AllProductResponseDTO> getProductsUnderPrice(
+            BigDecimal price,Pageable pageable
     );
 
     GenderResponseDTO getGenderProduct(
@@ -47,4 +50,8 @@ public interface ProductService {
     );
 
     AllProductResponseDTO getProductById(Long productId);
+
+    PageResponseDTO<AllProductResponseDTO> getByMaterialType(String materialType, Pageable pageable);
+
+    PageResponseDTO<AllProductResponseDTO> getProductsByAbovePrice(BigDecimal price, Pageable pageable);
 }

@@ -17,10 +17,7 @@ public interface ProductRepository extends JpaRepository<Products, Long> {
 
     Optional<Products> findByName(String name);
 
-    @Query("SELECT p FROM Products p WHERE p.price <= :price ORDER BY p.price DESC")
-    List<Products> findProductsUnderPriceDesc(@Param("price") BigDecimal price);
-
-    @Query("SELECT p FROM Products p WHERE p.gender = :gender")
+    @Query("SELECT p FROM Products p WHERE LOWER(p.gender) = LOWER(:gender)")
     List<Products> findProductByGender(@Param("gender") String gender);
 
     Page<Products> findByCategoryAndIsAvailableTrue(
@@ -54,4 +51,33 @@ public interface ProductRepository extends JpaRepository<Products, Long> {
             @Param("maxAvailableStock") Integer maxAvailableStock,
             Pageable pageable
     );
+
+    @Query("""
+       SELECT p
+       FROM Products p
+       WHERE LOWER(p.materialType) = LOWER(:materialType)
+       """)
+    Page<Products> getProductsByMaterialType(
+            @Param("materialType") String materialType,
+            Pageable pageable
+    );
+
+    @Query("""
+   SELECT p FROM Products p
+   WHERE p.price <= :price
+""")
+    Page<Products> findProductsUnderPrice(
+            @Param("price") BigDecimal price,
+            Pageable pageable
+    );
+
+    @Query("""
+   SELECT p FROM Products p
+   WHERE p.price >= :price
+""")
+    Page<Products> findProductsAbovePrice(
+            @Param("price") BigDecimal price,
+            Pageable pageable
+    );
+
 }

@@ -41,10 +41,6 @@ public class ProductDAO {
                 ));
     }
 
-    public List<Products> priceProduct(BigDecimal price) {
-        return productRepository.findProductsUnderPriceDesc(price);
-    }
-
     public List<Products> getGenderProduct(String gender) {
         return productRepository.findProductByGender(gender);
     }
@@ -82,5 +78,26 @@ public class ProductDAO {
 
     public Optional<Products> getProductById(Long productId) {
         return productRepository.findById(productId);
+    }
+
+    public Page<Products> getProductsByMaterialType(
+            String materialType,
+            Pageable pageable
+    ) {
+        return productRepository.getProductsByMaterialType(materialType, pageable);
+    }
+
+    public Page<Products> getProductsUnderPrice(
+            BigDecimal price,
+            Pageable pageable
+    ) {
+        return productRepository.findProductsUnderPrice(price, pageable);
+    }
+
+    public Page<Products> getProductsAbovePrice(
+            BigDecimal price,
+            Pageable pageable
+    ) {
+        return productRepository.findProductsAbovePrice(price, pageable);
     }
 }

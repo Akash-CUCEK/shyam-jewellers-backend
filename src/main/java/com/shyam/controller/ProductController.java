@@ -15,6 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -56,13 +58,42 @@ public class ProductController {
         );
     }
 
-    @Operation(summary = "Get products by price")
-    @PostMapping("/getProductsByPrice")
-    public BaseResponseDTO<GetProductResponseDTO> getProductsByPrice(
-            @Valid @RequestBody PriceRequestDTO dto
+    @GetMapping("/materialType/{materialType}")
+    public BaseResponseDTO<PageResponseDTO<AllProductResponseDTO>> getByMaterialType(
+            @PathVariable String materialType,
+            Pageable pageable
     ) {
+        log.info("Received request for getting products based on material Type");
         return new BaseResponseDTO<>(
-                productService.getPriceProduct(dto),
+                productService.getByMaterialType(materialType, pageable),
+                null
+        );
+    }
+
+    @Operation(summary = "Get products under given price")
+    @GetMapping("/price/under")
+    public BaseResponseDTO<PageResponseDTO<AllProductResponseDTO>> getProductsUnderPrice(
+            @RequestParam BigDecimal price,
+            Pageable pageable
+    ) {
+        log.info("Received request for getting products under price {}", price);
+
+        return new BaseResponseDTO<>(
+                productService.getProductsUnderPrice(price, pageable),
+                null
+        );
+    }
+
+    @Operation(summary = "Get products above given price")
+    @GetMapping("/price/above")
+    public BaseResponseDTO<PageResponseDTO<AllProductResponseDTO>> getProductsAbovePrice(
+            @RequestParam BigDecimal price,
+            Pageable pageable
+    ) {
+        log.info("Received request for getting products above price {}", price);
+
+        return new BaseResponseDTO<>(
+                productService.getProductsByAbovePrice(price, pageable),
                 null
         );
     }
@@ -83,6 +114,7 @@ public class ProductController {
     public BaseResponseDTO<GenderResponseDTO> getProductsByGender(
             @Valid @RequestBody GenderRequestDTO dto
     ) {
+        log.info("received request for getting products based on gender");
         return new BaseResponseDTO<>(
                 productService.getGenderProduct(dto),
                 null

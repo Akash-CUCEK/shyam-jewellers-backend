@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static com.shyam.constants.MessageConstant.*;
@@ -68,12 +69,62 @@ public class ProductServiceImp implements ProductService {
     }
 
     @Override
-    public GetProductResponseDTO getPriceProduct(PriceRequestDTO dto) {
-        log.info("Processing to get product based on price");
-        return productMapper.toProductListResponse(
-                productDAO.priceProduct(dto.getPrice())
+    public PageResponseDTO<AllProductResponseDTO> getProductsUnderPrice(
+            BigDecimal price,
+            Pageable pageable
+    ) {
+        Page<Products> page =
+                productDAO.getProductsUnderPrice(price, pageable);
+
+        if (page.isEmpty()) {
+            throw new SYMException(
+                    HttpStatus.NOT_FOUND,
+                    SYMErrorType.GENERIC_EXCEPTION,
+                    ErrorCodeConstants.ERROR_CODE_PRODUCT_NOT_FOUND,
+                    "No products found ",
+                    "No products in DB under price: " + price
+            );
+        }
+
+        return buildPageResponse(page);
+    }
+
+    @Override
+    public PageResponseDTO<AllProductResponseDTO> getProductsByAbovePrice(
+            BigDecimal price,
+            Pageable pageable
+    ) {
+        Page<Products> page =
+                productDAO.getProductsAbovePrice(price, pageable);
+
+        if (page.isEmpty()) {
+            throw new SYMException(
+                    HttpStatus.NOT_FOUND,
+                    SYMErrorType.GENERIC_EXCEPTION,
+                    ErrorCodeConstants.ERROR_CODE_PRODUCT_NOT_FOUND,
+                    "No products found ",
+                    "No products in DB above price: " + price
+            );
+        }
+
+        return buildPageResponse(page);
+    }
+
+    private PageResponseDTO<AllProductResponseDTO> buildPageResponse(
+            Page<Products> page
+    ) {
+        return new PageResponseDTO<>(
+                page.getContent().stream()
+                        .map(productMapper::toAllProductResponse)
+                        .toList(),
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.isLast()
         );
     }
+
 
     @Override
     public GenderResponseDTO getGenderProduct(GenderRequestDTO dto) {
@@ -143,6 +194,36 @@ public class ProductServiceImp implements ProductService {
         return productMapper.toAllProductResponse(product);
     }
 
+    @Override
+    public PageResponseDTO<AllProductResponseDTO> getByMaterialType(
+            String materialType,
+            Pageable pageable
+    ) {
+        log.info("Processing to get all products based on material type");
+        Page<Products> page =
+                productDAO.getProductsByMaterialType(materialType, pageable);
+
+        if (page.isEmpty()) {
+            throw new SYMException(
+                    HttpStatus.NOT_FOUND,
+                    SYMErrorType.GENERIC_EXCEPTION,
+                    ErrorCodeConstants.ERROR_CODE_PRODUCT_NOT_FOUND,
+                    "No products found for material Type: " + materialType,
+                    "No products in DB for material Type: " + materialType
+            );
+        }
+
+        return new PageResponseDTO<>(
+                page.getContent().stream()
+                        .map(productMapper::toAllProductResponse)
+                        .toList(),
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.isLast()
+        );
+    }
 
     @Override
     public Page<AllProductResponseDTO> getFilteredProducts(

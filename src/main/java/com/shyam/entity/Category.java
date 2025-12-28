@@ -2,10 +2,6 @@ package com.shyam.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 
@@ -21,8 +17,14 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long categoryId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
+
+    @Column(nullable = false)
+    private Boolean showOnHome;
+
+    @Column(length = 500)
+    private String imageUrl;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

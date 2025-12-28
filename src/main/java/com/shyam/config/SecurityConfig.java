@@ -42,7 +42,8 @@ public class SecurityConfig {
                                 "/auth/api/v1/admin/logIn",
                                 "/auth/api/v1/admin/verifyOtp",
                                 "/auth/api/v1/admin/forgetPassword",
-                                "/auth/api/v1/admin/verifyPasswordOtp"
+                                "/auth/api/v1/admin/verifyPasswordOtp",
+                                "/api/v1/public/**"
                         ).permitAll()
 
                         .requestMatchers("/api/v1/auth/**").permitAll()

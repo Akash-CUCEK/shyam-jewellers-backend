@@ -18,4 +18,6 @@ public class GetCategoryByIdResponseDTO implements Serializable {
     private LocalDateTime updatedAt;
     private String updatedBy;
     private Boolean status;
+    private String imageUrl;
+    private String showOnHome;
 }

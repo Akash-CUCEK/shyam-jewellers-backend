@@ -1,4 +1,5 @@
-package com.shyam.dto.request;
+package com.shyam.dto.response;
+
 
 import lombok.*;
 
@@ -7,11 +8,9 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AddCategoryRequestDTO {
+public class GetCategoryUserResponseDTO {
+    private Long categoryId;
     private String name;
-    private String createdBy;
-    private Boolean status;
     private String imageUrl;
     private Boolean showOnHome;
-    private String updatedBy;
 }

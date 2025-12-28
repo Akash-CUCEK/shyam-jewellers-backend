@@ -2,6 +2,8 @@ package com.shyam.dto.request;
 
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @Builder
@@ -9,14 +11,13 @@ import lombok.*;
 @NoArgsConstructor
 public class ProductFilterRequestDTO {
         private String category;
-        private Double minPrice;
-        private Double maxPrice;
-        private Double minWeight;
-        private Double maxWeight;
         private String materialType;
         private String gender;
         private Boolean isAvailable;
+        private BigDecimal minPrice;
+        private BigDecimal maxPrice;
+        private BigDecimal minWeight;
+        private BigDecimal maxWeight;
         private Integer minAvailableStock;
         private Integer maxAvailableStock;
 }
-

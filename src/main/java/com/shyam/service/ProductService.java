@@ -3,24 +3,48 @@ package com.shyam.service;
 import com.shyam.dto.request.*;
 import com.shyam.dto.response.*;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface ProductService {
 
-    ProductAddResponseDTO addProduct(ProductAddRequestDTO productAddRequestDTO );
+    ProductAddResponseDTO addProduct(
+            @Valid ProductAddRequestDTO productAddRequestDTO
+    );
 
-    UpdateResponseDTO updateProduct(UpdateRequestDTO updateRequestDTO);
+    UpdateResponseDTO updateProduct(
+            @Valid UpdateRequestDTO updateRequestDTO
+    );
 
-    DeleteResponseDTO deleteProduct(DeleteProductRequestDTO deleteProductRequestDTO);
+    DeleteResponseDTO deleteProduct(
+            @Valid DeleteProductRequestDTO deleteProductRequestDTO
+    );
 
-    GetProductResponseDTO getPriceProduct(PriceRequestDTO priceRequestDTO);
+    GetProductResponseDTO getPriceProduct(
+            @Valid PriceRequestDTO priceRequestDTO
+    );
 
-    CategoryResponseDTO getCategoryProduct(CategoryRequestDTO categoryRequestDTO);
+    GenderResponseDTO getGenderProduct(
+            @Valid GenderRequestDTO genderRequestDTO
+    );
 
-    GenderResponseDTO getGenderProduct(GenderRequestDTO genderRequestDTO);
+    ProductResponseDTO getNameProduct(
+            @Valid GetProductByNameRequestDTO getProductByNameRequestDTO
+    );
 
-    ProductResponseDTO getNameProduct(@Valid GetProductByNameRequestDTO getProductByNameRequestDTO);
+    PageResponseDTO<AllProductResponseDTO> getProductsByCategory(
+            String category,
+            Pageable pageable
+    );
 
-    GetProductResponseDTO getAllProduct();
+    Page<AllProductResponseDTO> getAllProduct(
+            Pageable pageable
+    );
 
-    ProductFilterResponseDTO getFilteredProducts(@Valid ProductFilterRequestDTO filterDTO);
+    Page<AllProductResponseDTO> getFilteredProducts(
+            @Valid ProductFilterRequestDTO filterDTO,
+            Pageable pageable
+    );
+
+    AllProductResponseDTO getProductById(Long productId);
 }

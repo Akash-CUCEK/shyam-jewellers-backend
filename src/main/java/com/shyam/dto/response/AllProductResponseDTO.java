@@ -1,8 +1,8 @@
 package com.shyam.dto.response;
 
-import java.math.BigDecimal;
-
 import lombok.*;
+
+import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -10,9 +10,14 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AllProductResponseDTO {
+    private Long id;
     private String name;
     private BigDecimal price;
+    private Integer discountPercentage;
+    private BigDecimal finalPrice;
     private BigDecimal weight;
-    private Integer availableStock;
+    private String imageUrl;
+    private String gender;
     private Boolean isAvailable;
+    private Integer availableStock;
 }

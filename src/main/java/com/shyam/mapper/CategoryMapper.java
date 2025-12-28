@@ -23,6 +23,8 @@ public class CategoryMapper {
         return GetCategoryByIdResponseDTO.builder()
                 .categoryId(category.getCategoryId())
                 .name(category.getName())
+                .imageUrl(category.getImageUrl())
+                .showOnHome(String.valueOf(category.getShowOnHome()))
                 .createdAt(category.getCreatedAt())
                 .createdBy(category.getCreatedBy())
                 .updatedAt(category.getUpdatedAt())
@@ -46,6 +48,15 @@ public class CategoryMapper {
         return category;
     }
 
+    public GetCategoryUserResponseDTO toUserDto(Category category) {
+        return GetCategoryUserResponseDTO.builder()
+                .categoryId(category.getCategoryId())
+                .name(category.getName())
+                .imageUrl(category.getImageUrl())
+                .showOnHome(category.getShowOnHome())
+                .build();
+    }
+
     public GetCategoryResponseDTO getAllCategories() {
         log.debug("Started to get all category");
         List<Category> categories = categoryDAO.findAllCategory();
@@ -54,6 +65,7 @@ public class CategoryMapper {
             return GetCategoriesResponseDTO.builder()
                     .categoryId(category.getCategoryId())
                     .name(category.getName())
+                    .showOnHome(category.getShowOnHome())
                     .createdAt(category.getCreatedAt())
                     .createdBy(category.getCreatedBy())
                     .updatedAt(category.getUpdatedAt())
@@ -72,6 +84,8 @@ public class CategoryMapper {
         var category = new Category();
         category.setName(addCategoryRequestDTO.getName());
         category.setStatus(addCategoryRequestDTO.getStatus());
+        category.setImageUrl(addCategoryRequestDTO.getImageUrl());
+        category.setShowOnHome(addCategoryRequestDTO.getShowOnHome());
         category.setCreatedAt(LocalDateTime.now());
         category.setUpdatedAt(LocalDateTime.now());
         category.setCreatedBy(addCategoryRequestDTO.getCreatedBy());
@@ -84,17 +98,6 @@ public class CategoryMapper {
         return AddCategoryResponseDTO.builder()
                 .message(message)
                 .build();
-    }
-
-    public void updateCategoryRequestDTO(AddCategoryRequestDTO updateCategoryRequestDTO) {
-        log.debug("Started to update new category");
-        var category  = categoryDAO.findByName(updateCategoryRequestDTO.getName());
-        category.setName(updateCategoryRequestDTO.getName());
-        category.setStatus(updateCategoryRequestDTO.getStatus());
-        category.setUpdatedAt(LocalDateTime.now());
-        category.setUpdatedBy(updateCategoryRequestDTO.getCreatedBy());
-
-        categoryDAO.saveCategory(category);
     }
 
     public UpdateCategoryResponseDTO mapToUpdateCategoryInMessage(String message) {

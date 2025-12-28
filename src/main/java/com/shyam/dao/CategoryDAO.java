@@ -104,4 +104,8 @@ public class CategoryDAO {
             );
         }
     }
+
+    public boolean canEnableShowOnHome(){
+     return categoryRepository.canEnableShowOnHome();
+    }
 }

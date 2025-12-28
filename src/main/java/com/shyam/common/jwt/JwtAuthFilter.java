@@ -40,7 +40,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 || uri.contains("/auth/api/v1/admin/logIn")
                 || uri.contains("/auth/api/v1/admin/verifyOtp")
                 || uri.contains("/auth/api/v1/admin/forgetPassword")
-                || uri.contains("/auth/api/v1/admin/verifyPasswordOtp")) {
+                || uri.contains("/auth/api/v1/admin/verifyPasswordOtp")
+                || uri.startsWith("/api/v1/public/")
+        ) {
 
             filterChain.doFilter(request, response);
             return;

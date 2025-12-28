@@ -1,6 +1,8 @@
 package com.shyam.service.Imp;
 
 
+import com.shyam.dto.response.*;
+import com.shyam.entity.Category;
 import com.shyam.validation.RowValidationError;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -14,10 +16,6 @@ import com.shyam.constants.ErrorCodeConstants;
 import com.shyam.dao.CategoryDAO;
 import com.shyam.dto.request.AddCategoryRequestDTO;
 import com.shyam.dto.request.GetCategoryByIdRequestDTO;
-import com.shyam.dto.response.AddCategoryResponseDTO;
-import com.shyam.dto.response.GetCategoryByIdResponseDTO;
-import com.shyam.dto.response.GetCategoryResponseDTO;
-import com.shyam.dto.response.UpdateCategoryResponseDTO;
 import com.shyam.mapper.CategoryMapper;
 import com.shyam.service.CategoryService;
 import com.shyam.validation.CategoryExcelValidation;
@@ -31,7 +29,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.shyam.constants.MessageConstant.*;
 
@@ -51,27 +51,61 @@ public class CategoryServiceImp implements CategoryService {
     }
 
     @Override
-    public AddCategoryResponseDTO addCategories(AddCategoryRequestDTO addCategoryRequestDTO ) {
+    public AddCategoryResponseDTO addCategories(AddCategoryRequestDTO addCategoryRequestDTO) {
+
         log.info("Processing the request for adding category");
+
+        // 🔹 Duplicate name check
         if (!categoryDAO.isNameAvailable(addCategoryRequestDTO.getName())) {
-            throw new SYMException(HttpStatus.BAD_REQUEST,
+            throw new SYMException(
+                    HttpStatus.BAD_REQUEST,
                     SYMErrorType.VALIDATION_FAILED,
                     ErrorCodeConstants.ERROR_CODE_VALIDATION,
                     "Category name already exists.",
-                    "Duplicate category name");
+                    "Duplicate category name"
+            );
         }
-        var newCategory =CategoryMapper.addCategories(addCategoryRequestDTO);
+
+        if (addCategoryRequestDTO.getShowOnHome()
+                && !categoryDAO.canEnableShowOnHome()) {
+
+            throw new SYMException(
+                    HttpStatus.BAD_REQUEST,
+                    SYMErrorType.VALIDATION_FAILED,
+                    ErrorCodeConstants.ERROR_CODE_VALIDATION,
+                    "Maximum 7 categories can be shown on home page.",
+                    "Home page category limit exceeded"
+            );
+        }
+
+        var newCategory = CategoryMapper.addCategories(addCategoryRequestDTO);
         categoryDAO.saveCategory(newCategory);
-        return categoryMapper.mapToAddCategoryInMessage(messageSourceUtil
-                .getMessage(MESSAGE_CODE_ADD_CATEGORY));
+
+        return categoryMapper.mapToAddCategoryInMessage(
+                messageSourceUtil.getMessage(MESSAGE_CODE_ADD_CATEGORY)
+        );
     }
 
     @Override
-    public UpdateCategoryResponseDTO updateCategoryRequestDTO(AddCategoryRequestDTO updateCategoryRequestDTO ) {
+    public UpdateCategoryResponseDTO updateCategoryRequestDTO(
+            AddCategoryRequestDTO dto
+    ) {
         log.info("Processing the request for updating category");
-        categoryMapper.updateCategoryRequestDTO(updateCategoryRequestDTO);
-        return categoryMapper.mapToUpdateCategoryInMessage(messageSourceUtil
-                .getMessage(MESSAGE_CODE_UPDATE_CATEGORY));
+
+        Category category = categoryDAO.findByName(dto.getName());
+
+        category.setName(dto.getName());
+        category.setStatus(dto.getStatus());
+        category.setShowOnHome(dto.getShowOnHome());
+        category.setImageUrl(dto.getImageUrl());
+        category.setUpdatedAt(LocalDateTime.now());
+        category.setUpdatedBy(dto.getUpdatedBy());
+
+        categoryDAO.saveCategory(category);
+
+        return categoryMapper.mapToUpdateCategoryInMessage(
+                messageSourceUtil.getMessage(MESSAGE_CODE_UPDATE_CATEGORY)
+        );
     }
 
     @Override
@@ -146,6 +180,28 @@ public class CategoryServiceImp implements CategoryService {
                 messageSourceUtil.getMessage(MESSAGE_CODE_ADD_CATEGORY)
         );
         return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public GetAllCategoryUserResponseDTO getAllCategoriesUser() {
+        log.info("Processing to get all category for the user");
+        List<Category> categories = categoryDAO.findAllCategory();
+        List<GetCategoryUserResponseDTO> categoryDTOs =
+                categories.stream()
+                        .map(categoryMapper::toUserDto)
+                        .toList();
+        return GetAllCategoryUserResponseDTO.builder()
+                .getCategoryUserResponseDTOS(categoryDTOs)
+                .build();
+    }
+
+    @Override
+    public GetCategoryUserResponseDTO getCategoryUser(
+            GetCategoryByIdRequestDTO getCategoryByIdRequestDTO
+    ) {
+        log.info("Processing to get category for the user");
+        Category category = categoryDAO.findById(getCategoryByIdRequestDTO.getId());
+        return categoryMapper.toUserDto(category);
     }
 
     private byte[] generateErrorExcel(List<RowValidationError> errors) throws IOException {
